@@ -1,0 +1,2082 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#1a1e1f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Order Bench">
+<link rel="apple-touch-icon" href="data:image/png;base64,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">
+<link rel="icon" type="image/png" href="data:image/png;base64,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">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<title>Order Bench</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+  :root {
+    --bg: #eef0ef;
+    --surface: #ffffff;
+    --sunken: #e3e7e6;
+    --paper: #fffdf8;
+    --paper-ink: #201d16;
+    --paper-ink-soft: #6b6455;
+    --paper-line: #e7e1d3;
+    --ink: #1a1e1f;
+    --ink-soft: #5c6467;
+    --ink-faint: #8b9295;
+    --line: #d7dbda;
+    --accent: #a97a35;
+    --accent-strong: #7e5a24;
+    --accent-soft: #f1e4cd;
+    --mark: #b23a2c;
+    --danger: #b23a2c;
+    --shadow: 0 1px 2px rgba(20, 24, 24, 0.06), 0 10px 30px -12px rgba(20, 24, 24, 0.18);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #131516;
+      --surface: #1b1e1f;
+      --sunken: #101213;
+      --paper: #fffdf8;
+      --paper-ink: #201d16;
+      --paper-ink-soft: #6b6455;
+      --paper-line: #e7e1d3;
+      --ink: #e8e6df;
+      --ink-soft: #a3a9aa;
+      --ink-faint: #6c7274;
+      --line: #2a2e2f;
+      --accent: #d99f52;
+      --accent-strong: #eab066;
+      --accent-soft: #3a2f1c;
+      --mark: #d6604e;
+      --danger: #d6604e;
+      --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 10px 30px -12px rgba(0, 0, 0, 0.55);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #131516;
+    --surface: #1b1e1f;
+    --sunken: #101213;
+    --paper: #fffdf8;
+    --paper-ink: #201d16;
+    --paper-ink-soft: #6b6455;
+    --paper-line: #e7e1d3;
+    --ink: #e8e6df;
+    --ink-soft: #a3a9aa;
+    --ink-faint: #6c7274;
+    --line: #2a2e2f;
+    --accent: #d99f52;
+    --accent-strong: #eab066;
+    --accent-soft: #3a2f1c;
+    --mark: #d6604e;
+    --danger: #d6604e;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 10px 30px -12px rgba(0, 0, 0, 0.55);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'IBM Plex Sans', system-ui, sans-serif;
+    padding: 0 0 64px;
+  }
+
+  .wrap {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 36px 24px 0;
+  }
+
+  header.top {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+  }
+
+  .wordmark {
+    font-family: 'Big Shoulders Display', sans-serif;
+    font-weight: 800;
+    font-size: 34px;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    line-height: 1;
+  }
+  .wordmark .dot { color: var(--mark); }
+
+  .tagline {
+    font-size: 13px;
+    color: var(--ink-soft);
+    max-width: 30ch;
+  }
+
+  .layout {
+    display: grid;
+    grid-template-columns: minmax(320px, 460px) 1fr;
+    gap: 28px;
+    align-items: start;
+  }
+
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; }
+  }
+
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+  }
+
+  form.panel { padding: 24px; display: flex; flex-direction: column; gap: 22px; }
+
+  fieldset {
+    border: 0;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  legend {
+    font-family: 'Big Shoulders Display', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent-strong);
+    padding: 0 0 6px;
+    width: 100%;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 4px;
+  }
+
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .row.three { grid-template-columns: 1fr 1fr 1fr; }
+
+  label {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 4px;
+  }
+
+  input, select, textarea {
+    width: 100%;
+    background: var(--sunken);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 9px 10px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 14px;
+    color: var(--ink);
+  }
+
+  input[data-mono], .mono { font-family: 'IBM Plex Mono', monospace; font-variant-numeric: tabular-nums; }
+
+  textarea { resize: vertical; min-height: 56px; font-family: 'IBM Plex Sans', sans-serif; }
+
+  input:focus-visible, select:focus-visible, textarea:focus-visible, button:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+  }
+
+  .field-note { font-size: 11px; color: var(--ink-faint); margin-top: 3px; }
+  .field-note.is-manual { color: var(--mark); font-weight: 600; }
+  .field-note.is-auto { color: var(--accent-strong); font-weight: 600; }
+
+  .add-new-row { display: flex; gap: 6px; margin-top: 8px; }
+  .add-new-row input { flex: 1; }
+  .add-new-row button { padding: 9px 12px; font-size: 12.5px; }
+
+  select {
+    appearance: auto;
+    cursor: pointer;
+  }
+
+  .actions { display: flex; flex-wrap: wrap; gap: 10px; padding-top: 4px; }
+
+  button {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 13.5px;
+    font-weight: 600;
+    border-radius: 4px;
+    padding: 10px 16px;
+    cursor: pointer;
+    border: 1px solid transparent;
+  }
+
+  .btn-primary { background: var(--accent); color: #211605; border-color: var(--accent-strong); flex: 1; }
+  .btn-primary:hover { background: var(--accent-strong); }
+  .btn-ghost { background: transparent; color: var(--ink-soft); border-color: var(--line); }
+  .btn-ghost:hover { color: var(--ink); border-color: var(--ink-faint); }
+
+  .preview-col { display: flex; flex-direction: column; gap: 16px; position: sticky; top: 24px; }
+
+  .sheet-stage {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 28px;
+    display: flex;
+    justify-content: center;
+  }
+
+  /* Positions below are the docket's real coordinates on the 612x792pt (8.5x11in)
+     page, converted to percentages, so this preview sits exactly where the PDF
+     will print — logo included, pulled from your actual file. */
+  .sheet {
+    position: relative;
+    background: var(--paper);
+    color: var(--paper-ink);
+    width: 100%;
+    max-width: 480px;
+    aspect-ratio: 8.5 / 11;
+    box-shadow: var(--shadow);
+    font-family: 'IBM Plex Sans', sans-serif;
+  }
+
+  .sheet-logo {
+    position: absolute;
+    left: 63.86%;
+    top: 2.27%;
+    width: 24.51%;
+    height: auto;
+    display: block;
+  }
+
+  .sheet-fields {
+    position: absolute;
+    left: 56.3%;
+    top: 7.6%;
+    width: 40%;
+    display: flex;
+    flex-direction: column;
+    gap: 4.5px;
+    font-size: 11px;
+    line-height: 1.3;
+  }
+
+  .sheet-fields .line { display: flex; gap: 4px; }
+  .sheet-fields .line.split { display: flex; gap: 14px; }
+  .sheet-fields .pair { flex: 1; display: flex; gap: 4px; }
+  .sheet-fields .lbl { color: var(--paper-ink); }
+  .sheet-fields .lbl.strong { font-weight: 700; }
+  .sheet-fields .val { font-family: 'IBM Plex Mono', monospace; }
+
+  .sheet-extra {
+    position: absolute;
+    left: 56.3%;
+    top: 48%;
+    width: 40%;
+    padding-top: 10px;
+    border-top: 1px solid var(--paper-line);
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    font-size: 10.5px;
+  }
+  .sheet-extra .lbl { font-weight: 600; }
+  .sheet-extra .val { color: var(--paper-ink-soft); }
+
+  .example-badge {
+    font-size: 11px;
+    color: var(--ink-faint);
+    text-align: center;
+  }
+
+  .recent {
+    margin-top: 36px;
+  }
+
+  .recent h2 {
+    font-family: 'Big Shoulders Display', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin: 0 0 4px;
+  }
+
+  .recent .sub { font-size: 12px; color: var(--ink-faint); margin: 0 0 14px; }
+
+  .recent-list {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    padding-bottom: 6px;
+  }
+
+  .recent-card {
+    flex: 0 0 auto;
+    width: 200px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 12px 14px;
+    cursor: pointer;
+    position: relative;
+  }
+  .recent-card:hover { border-color: var(--accent); }
+  .recent-card .no { font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: var(--accent-strong); }
+  .recent-card .store { font-size: 13px; margin-top: 4px; font-weight: 600; }
+  .recent-card .meta { font-size: 11px; color: var(--ink-faint); margin-top: 6px; }
+  .recent-card .del {
+    position: absolute; top: 8px; right: 8px;
+    background: none; border: none; color: var(--ink-faint);
+    font-size: 14px; padding: 2px 5px; line-height: 1;
+  }
+  .recent-card .del:hover { color: var(--danger); }
+
+  .recent-empty { font-size: 12.5px; color: var(--ink-faint); padding: 14px 0; }
+
+  /* Print isolates the docket sheet itself — same absolute/percentage layout
+     used for the on-screen preview, just scaled up to the actual page instead
+     of the ~480px preview box, so it lines up on paper exactly like the PDF.
+     #sheet is pinned with position:fixed (anchored to the page box itself,
+     not to any ancestor) because .preview-col uses position:sticky, which
+     would otherwise become the containing block for an absolutely-positioned
+     #sheet and throw off the left/top offset. html/body are clamped to one
+     page's height with overflow hidden so the hidden form column — still in
+     normal flow under visibility:hidden — can't push out extra blank pages. */
+  @media print {
+    html, body { height: 11in; overflow: hidden; margin: 0; padding: 0; }
+    body * { visibility: hidden; }
+    #sheet, #sheet * { visibility: visible; }
+    #sheet {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 8.5in;
+      height: 11in;
+      max-width: none;
+      aspect-ratio: 8.5 / 11;
+      box-shadow: none;
+      margin: 0;
+    }
+    @page { size: letter; margin: 0; }
+  }
+</style></head><body>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <div class="wordmark">SATORU<span class="dot">.</span></div>
+      <div class="tagline">Order Bench — build a ring order docket and download it as a PDF.</div>
+    </div>
+  </header>
+
+  <div class="layout">
+    <form class="panel" id="orderForm" onsubmit="return false;">
+      <fieldset>
+        <legend>Order</legend>
+        <div class="row">
+          <div>
+            <label for="orderNo">Order No.</label>
+            <input id="orderNo" data-mono>
+          </div>
+          <div>
+            <label for="store">Store</label>
+            <input id="store" placeholder="I. Gorman (Chapman)">
+          </div>
+        </div>
+        <div>
+          <label for="customer">Customer <span style="text-transform:none;font-weight:400;">(optional)</span></label>
+          <input id="customer" placeholder="Only if different from the store contact">
+        </div>
+        <div class="row">
+          <div>
+            <label for="orderDate">Order date</label>
+            <input id="orderDate" type="date">
+          </div>
+          <div>
+            <label for="dueDate">Due date</label>
+            <input id="dueDate" type="date">
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Specification</legend>
+        <div class="row">
+          <div>
+            <label for="styleSelect">Style</label>
+            <select id="styleSelect"></select>
+            <div class="add-new-row" id="styleAddRow" hidden>
+              <input id="styleAddInput" data-mono placeholder="e.g. LB02/R">
+              <button type="button" class="btn-ghost" id="styleAddConfirm">Add</button>
+            </div>
+            <input type="hidden" id="style">
+          </div>
+          <div>
+            <label for="metalSelect">Metal</label>
+            <select id="metalSelect"></select>
+            <div class="add-new-row" id="metalAddRow" hidden>
+              <input id="metalAddInput" placeholder="e.g. 22K Yellow">
+              <button type="button" class="btn-ghost" id="metalAddConfirm">Add</button>
+            </div>
+            <input type="hidden" id="metal">
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label for="widthMm">Width (mm)</label>
+            <input id="widthMm" data-mono type="number" step="0.1" min="0">
+            <select id="widthSelect" hidden aria-label="Width"></select>
+          </div>
+          <div>
+            <label for="heightMm">Height (mm)</label>
+            <input id="heightMm" data-mono type="number" step="0.1" min="0">
+            <select id="heightSelect" hidden aria-label="Height (thickness)"></select>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Stones</legend>
+        <div class="row">
+          <div>
+            <label for="center">Center</label>
+            <input id="center" placeholder="Leave blank if none">
+            <select id="centerRangeSelect" hidden aria-label="Center diamond size"></select>
+            <div class="field-note" id="centerRangeNote"></div>
+          </div>
+          <div>
+            <label for="sign">Sign</label>
+            <input id="sign" placeholder="Dia/Ruby">
+          </div>
+        </div>
+        <div>
+          <label for="stoneDetail">Stone detail <span style="text-transform:none;font-weight:400;">(optional — one stone per line, for the invoice)</span></label>
+          <textarea id="stoneDetail" placeholder="0.01ct DEF/VVS&#10;0.01ct Top Red Ruby"></textarea>
+          <div class="field-note">Shown in the invoice's Stones column. Leave blank to fall back to Sign.</div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Ring dimensions</legend>
+        <div>
+          <label for="sizeSystem">Size</label>
+          <div class="row">
+            <select id="sizeSystem">
+              <option value="JP">Japan (JP)</option>
+              <option value="US">USA</option>
+              <option value="EU">Europe (EU)</option>
+              <option value="custom">Other / custom</option>
+            </select>
+            <select id="sizeValueSelect"></select>
+          </div>
+          <input id="sizeValueCustom" data-mono placeholder="e.g. 6 3/4" style="display:none; margin-top:8px;">
+          <div class="field-note" id="sizeChartNote"></div>
+          <input type="hidden" id="size">
+        </div>
+        <div class="row">
+          <div>
+            <label for="iid">IID (mm)</label>
+            <input id="iid" data-mono type="number" step="0.01" min="0">
+          </div>
+          <div>
+            <label for="iod">IOD (mm)</label>
+            <input id="iod" data-mono type="number" step="0.01" min="0">
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label for="oid">OID (mm)</label>
+            <input id="oid" data-mono type="number" step="0.01" min="0">
+          </div>
+          <div>
+            <label for="ood">OOD (mm)</label>
+            <input id="ood" data-mono type="number" step="0.01" min="0">
+          </div>
+        </div>
+        <div class="field-note" id="styleChartNote"></div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Price &amp; notes</legend>
+        <div>
+          <label for="price">Price</label>
+          <input id="price" data-mono type="text" inputmode="numeric" placeholder="2890">
+          <div class="field-note" id="priceNote"></div>
+        </div>
+        <div>
+          <label for="notes">Notes <span style="text-transform:none;font-weight:400;">(optional)</span></label>
+          <textarea id="notes" placeholder="Special instructions, engraving, etc."></textarea>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Invoice <span style="text-transform:none;font-weight:400;">(optional — only needed to generate an invoice)</span></legend>
+        <div>
+          <label for="storeAddress">Bill-to address</label>
+          <textarea id="storeAddress" placeholder="1133 20th Street, NW LI1&#10;Washington, DC 20036"></textarea>
+          <div class="field-note">Remembered per store — fills in on its own next time you order from the same store.</div>
+        </div>
+        <div>
+          <label for="storePhone">Phone</label>
+          <input id="storePhone" data-mono placeholder="202.775.8544">
+        </div>
+        <div>
+          <label for="shipTo">Ship to <span style="text-transform:none;font-weight:400;">(optional)</span></label>
+          <textarea id="shipTo" placeholder="Leave blank to print “SAME” as the address above"></textarea>
+        </div>
+        <div class="row">
+          <div>
+            <label for="invoiceDate">Invoice date</label>
+            <input id="invoiceDate" type="date">
+          </div>
+          <div>
+            <label for="shipping">Shipping &amp; handling</label>
+            <input id="shipping" data-mono type="text" inputmode="numeric" placeholder="33">
+          </div>
+        </div>
+      </fieldset>
+
+      <div class="actions">
+        <button type="button" class="btn-primary" id="downloadBtn">Download PDF</button>
+        <button type="button" class="btn-ghost" id="printBtn">Print</button>
+        <button type="button" class="btn-ghost" id="invoiceBtn">Generate Invoice</button>
+        <button type="button" class="btn-ghost" id="clearBtn">New blank order</button>
+      </div>
+      <div class="field-note" id="statusNote"></div>
+    </form>
+
+    <div class="preview-col">
+      <div class="sheet-stage">
+        <div class="sheet" id="sheet">
+          <img class="sheet-logo" alt="SATORU." src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAm8AAABcCAIAAAC3JcX1AAAg80lEQVR4nO2dT2wb153HX7ydEVONvCYpKxrZClV6KlOUFBmUFSg1tMyhJgpEEGwUiL3IQeihKHwo1rtF0VNRFNgFdlEs0L2si70EPhR1tChiCPIeKCA1I8QWrBUrLyWG5k5oTWVxFEMivfUokTiJtYcfMmElknpv/g/1Pocild8Mn2z+5vu+b97v93tpb28PUSgUCoVCMcAxpydAoVAoFIrnoWpKoVAoFIpRvuH0BJAoig3+VBAE22ZCoTQTDSKLhhWFYjqWq6kW0rIsa/9bqVS2tra0MZVKpea1LMtW/3cwGEQIHT9+vLW1taWlJRAIwB/RRwPlCKJFVqlU2t3dhf/FiazqsOJ5Hn0VU21tbRzHIRpQFIouXjL9FBIEealUKpVKm5ubW1tb9cTSFFiW5Xk+GAx2dXUxDIOa61mQy+U++OADVVXxL3n11Vf7+voikYh1s0IIPXjw4OHDh5Z+hJv54Q9/aP+HQmSpqlosFre2tmRZtiKyWJblOK69vT0QCIDWuiqgfv/73xeLRadnUZuuri6fzwf/ffr0aZ/P5/P5urq64CfwdLKZ+fn5hYUFnJFdXV3f//73rZ6PKUiSND09jTPS5l/KHG8Kca4oysbGxuPHjxVFMeW2OFQqFUmSJElKp9MIIZ7nZVl24VNAB7lc7pNPPtne3ia6ShRFG37xhw8fPnv2zOpPoSCERFEEBZVlGbZ2LKVSqcBSGP4vy7I9PT08z8NWkOMxVSwWd3Z2nJ1DPQqFgvbf2Wy2+o98Pl84HD59+vSZM2daWlqQXeK6tbWF+dfl2jXKQXZ2dtz5SxlVUwh1SZIymYwpEzKI9sTheb5UKgUCAcfj3wj7YhKTlZUVhmGstqcUS9Eiy+bl6T4qlUo+n8/n86gqppALZNVb7OzsZLNZLZzD4bAgCNFoFDnkWSlWoF9NRVFUFGVxcVFbxroKkFWWZWOxGM/zngt+MKb6rl1bW+vv7zd3PhR7gG0eWZbz+bzbIktbqvb29qqqyjCM58LKJRQKhUKhkEwmeZ4fGxuD3WAqq15Hj5q6XEerqVQq8/PzLMu+8cYbnvOp+owpQO2p5wAdFUXRJds8DQC3GggEFEXhOM5bYeUqZFmemppCCI2NjQ0PDyOqqV6GTE0h4NPptCRJ1szHEiqVSiqV4nneKwtqI8YUoPbUQ3hIR6splUqzs7NUU01hbm5ubm4ukUhEo1EqqB6FQE3Bks7Ozlo3G0uRZXlmZiYej9tzTscgRowpQO2pJxBFUZbl+fl5pyeiE9BUDy1V3Uwymfzwww+vXLni9/uppnoO3FpIoihC2FgxCbYWVnwQQiiVSpVKpcYlI5zFuDEF1tbWiFJrKDYjiuLHH3+cSqW8K6UasFSVJMnNkeUJdnZ2bt68mc1mafB6DixvKoqiKdtQgUCgra0tGAyyLNve3l69+Nq3pN0Xk5Bat7W1tbW1Zfx8YyqVcrlDNW5MAWpPXYullhQWo5AndhCtwoPp6arpdDqfz1OTapxkMvnkyZNEIkEdqoc4XE3BleqW0kAgcOrUqVAoRFRaYd8w7f9qCeySJK2vr+s+BuVaQTXLmALWvT0dGhqyp3oDUVbriRMnrJqHqYiiOD8/b1byKMdxwWCQ5/nqFeqhX+zqUkrPnz+XZdmUQiuKorjkfQqkeNrzWTs7O5DaaGIubDabLZfLV65coYLqFQ5XU0VRUqkU6X1Zlj179iyEk4lBpd2qr6/PYKprKpUaHx83a2ImgmNMW1tbQ6EQzkiL7Onrr7/++uuvm3vPevzqV7/CGXbixAlHShQRAV/aZDJpXLd6e3tDoZDuWoAHLwF9lSRpdXXV4HH9VCo1ODiob2JmEQ6H33rrLTs/UdubLZfL5XIZth/K5bLuG8qynEwmqUP1CoeoqSiKOqR0dHTUhhRPuD/sKenbiF5cXHTVlhS+Mf32t7/d3d2No6b0cK97ACmdmZkxchODItoAbe2ryWo+n9f9YkWLR/fEl9VomtfR0dHR0XH27FnQ12w2m8lk9G1FZLPZ06dP04O+nqCRmsLrUqJFNM/zo6OjyMYQ0j4oFArdvXuXKPi1bHSXBLyqqphvTLu7uxFCr7zyyqeffnroYPr21A0YlFKLNntqon1KKBQyklmeyWTW19eRa+LLfkACh4aGotHo7u5uKpXScSQCijx0dHRYMEGKmRziTYkM3+DgoCAIjkSO5lNXVlagChom8/Pzly9ftmxeBORyuZWVFZyRIKWRSERRFBw1pfbUcQxKqVORBZ/IcZyiKPfv39fhU0ulEnyrj6ygAgzDMAyTSCTi8fitW7dIt3+np6cnJyepPXU5jdSUqERDb2+vU1KqoX06kaDCvpbj0a6q6traGs7I/v5+MJocx7Esi7N5QO2ps+iW0lAoNDg46Oz7CE1T9R1CzufzUOfd8RBzHNDUycnJxcXFubk5/AvL5XKhUDh79qx1c6MYp26+qSiK+JrEsmx/f78bokUQhP7+fnirhIkbCtDgG9PqtO5IJAKFsw+F5p46iCiKd+/e1XFhPB6PxWJ9fX0uiSye58fHx4mCC8hkMi5P8rYThmGGh4fHxsaIrpqbm6Mh7HIaVW/A39gZGBhwQ8ADgiC8+eabRJfY0OiqMfjGNBqNVltM2PXFYWVlJZfL6ZkcxQCiKK6srOjYIx0fH3dbZWlBEPr6+i5evNjb20t6bSqVomKgAYI6MjKCfwmcE7ZuShTj1FVTonMHoVDIjMmYBsMwcEAfE6KdYdPBN6Ysy0I/rGowH7jUntoP5GqTfrsCgcDly5ddddq8Gtj+IYovIJlMUnuqwTDMhQsXtO7iOJhV1IViEXXVdHd3F/MWB5/vjoP5BpdlWY7jQqFQT0+P9ZOqi25jihCKRCL4z1xqT+2HNMEsEAjE43HHjyA0BqZHKqiVSmVlZYUKqgbDMFeuXMEfn8lk6ILYzdQ9hYS/+dnW1ubOyB8cHNTeiYJwanUNtaJrjs8c35iiOvu6DMNgpsrQw712IopiOp0muoRlWZBSi6ZkItokiY4d5PN5HbvETYzf7/f7/ZhbuCYWWqJYgf5u4S5HEARVVVtbW90jnDUhMqY1f46fKoPo4V4bgUJdRJckEgl3fktrAlPd3NwkOnZw7949125i2w/DMAMDA/jne8vlMk08dS1Nq6YIob6+PqencAhExvTVV1+tp4Icx2GucKk9tQdRFO/du0d0STwe91xCIYjinTt38Gu8lEol440rmol6zQlqQtXUzeB2ZGtApVKh70L0gW9Mu7u7GzxqI5HIuXPnMD+Uvj21AUVRSM/xue0ELyaCIMTjcaJLFhcX6RNDo6ury+kpUMyhrpoeP34c8xaOp5d4FCJjqlVsqAfYU5xbra2tUXNgKUS52kAsFvOilAJwlA9/PLWnuqGrEDdTV01bW1vx70IFVQdmGVOAyJ4uLS1Re2opRG9MobS1dxEEIRaLEV2Sz+epMFCajLpq2t7ejn+XdDpNY4OIXC73xz/+EXPwocYUwLen5XKZmgPrIIoFOGHuXWOqQZQwQ3o+iwI0wfekiamrpkQHIiqVSiqVooKKD/4p3OpSgo2h9tQNiKL4+PFj/PFaZxhPoyNB1mpBfemllyy9v1nQCkdNQ6NTSKTvQkBQqaYeSi6XW1pawhx87tw5/IQWjuMwt+ipPbUIVVWJ/mKbQEo1iHJJV1dXLX1WeEVNiV6TYW4+URyhrpoKgkCaZ10qld5//31FUaigNkZRFMwFqd/vJyoyjl8HH1F7ag3FYhF/MFF2hMshfWLo65mKjyfUVFVVovIXVE3dTKN8U47jAoEA6Zd+dnY2FAqpqkpztGtinTEFOjs7Mdu0UXtqOqIorq6u4o+HPoaWTcduGIaBZqiY4y0VVE+oKSLxplRKXU4jNYVyQjr6MkqSJEkSKDFU8W2mR4ZBrDOmQCQS2djYWFhYwBm8tLTEcRwtjWQiRArhwhrXRhAEQRRFfLNlaS7A3t6edTc3BVVVFxcX8ccLguC5+h5HikNqITEME4vFSMuNAvAmFSHU29urKAoIwxGXVauNKUDtqVMQFSVvMikFOjs78dW0WCyKomjRM8H93nR3d5eoZzj+SxyKIxyipvBFX11dNbInk8/nIZk9EAhIkhQMBo+sslptTAFqT51ic3MTf/CpU6eaLwSIvrSWruRc7k1VVb19+zb+eJ/PR3d6Xc7hdXoh4FOplPGXHKVSSbsJx3HpdJrn+fb2dti+aL4nyz7sMaYAtaeOcJS3eTWIXp1ah5u9qaqqyWSSaKM7kUjQbV6Xg1X13kRB1VAURVEULecMxDUYDDaxc8U3pq2trbqNKUDtqSM8f/4cf3BTqqkgCOl0Gl9NZVm2KNJd601VVZ2eni4UCviX+Hy+cDhs3ZQopoDbQwa+8SsrK6QFSDHZJ64sywaDwfb2dve3VMOEyJge7AquA2pP7Wdra8vpKThPMBikpY5qoqrq7u7uu+++S9qpdGJighpT90PQkQ3EjOd5OFtkKZVKRZbl6p2QQCDg6Z1hfGPKsmxnZ6fxT4xEImtra5gSTu2pcUgLClo3E2ch+tWsS5Jx1U4v6Ggqlcpms6TXRqNR2mfGE5D1N4UT8JcvXyY6B28K8M51386wV8Q1l8s9ePAAc/DQ0JBZqtbd3Y2pptSemgJ+m89gMOjmb6wRiEpS7O7uWjQNN6gpnPEul8sLCws6dBQh5Pf76RtTr0DcLVx7BIRCIe2wrv3s2xnmeV6SpK6uLneWjNjY2Nje3sYZaZYx1YhGo5hhTO2pnTSxN3UJTimQliVVKBREUdQnohpXr16lUuoViNUUAMViGKa/v18UxUePHuGvyq0AtoXT6TTLsj09PaFQyD1HmXK53MOHDzEHm2hMEUJwK8x4pvaU0kzU86YvXrxYW1sjfXN5KDs7O0+ePEEIybJsViH7a9eutbS0mHIrig3oVFMAtAraR4BTdMqqalQqFc0xa1UjnNXUjY0NzKWG6cYUoPaUcgSpd6b3iy++uHv37tOnT22eDxE8z1+6dKmlpYUaUw9hSE01QK44juvv73eJrKKvqkZwHCdJEvTDsV9WHTSmALWnFDdDlFNExIsXL+r9kWuTZ4CRkZELFy5QHfUc5qgpoGkVyKqqqsVicd/RXPtRFCWdTqfTaa2bsZ2aim9MEWGHdiKoPaW4k7a2NovuXE8y9/b23HBAqSY+n29iYgLOfzg9FwoxZqqphiZXfX19kDagqurm5qYsy1tbW065n0wmk8lkYrEYsktQiYyp3+//xjcs+eeg9pRCcT9jY2PDw8NUR72LJY/vavbpluPimk6nl5eX4/G4De9TiYypwVKCh0LtKYUCuG2nF3QUOXcOmWIKlqvpPmqKK/oqnXRzc3Nra8vq48GVSmV2dtZqk0pkTIPBoKUlrak9dRtNXDWJqJGOdTTYznXJTi/P8yMjI1AykOpoE2C3mu7joJiBviqKsvUVFj3Z0+k0hL1FgkpkTEdGRs6cOWPFNKrp7u5eW1vDGUntqT4wSzkihCqVinXNyJyFqJHO8ePHLZpGAwPqoDeFiruCIFARbT4cVtODNN4Zfv78uYmlyLRyTqY/1IiMaUdHR0dHh7kTOEgkElFVFVNNqT3VgSAIRGpq9XycguhXa21ttW4mNXFESsfGxniehwKBVEGbFdep6T7qiatZp4UtElQiYxqLxV555RUTP70eDMNQe2opwWAQfxXikh1R0yHaxLbuTG89jh075vP5fD6fwfsQ1X8AKaU62ty4XU33cfC0cKlUkmXZSHprJpMxtzcWkTFtb2+vaUxfvHixtbVVKpXMXUr39/dTe2odRPuWRDuiXkEURSI1Ndh5sAH1Xo6yLHv16lWDN4cF/dTUFOb4qampa9euIWpMmxqPqWk1mrKKotjf3w+aqm8f+P79+4FAwBR7msvl1tbW8I3p+fPnaxrTzz///IMPPlhbW3PwHQ+1p6QQLcuczcO2DvxFmKXFii0NHIZhurq6xsbG5ubmMC+5cePGtWvXqJo2McecnoAJQGnDsbGxeDx+8eJFHatdOBJC1FGrAfh9TE+ePFnTmO7t7a2urj59+tTZo/zUnpJCqqZmfeXcA9EXxtONdBiGGR4eJmqYc/v27Wbd3qeg5lBTDUEQzp07d/HiRch+IcKUBnO5XO6TTz7BHz8yMlLPmD569Mi6ZlX4LC0t5XI5p2fhJfD9VqVSab5n68bGBv5g64p/IVvSYBiGuXLlCv54WZY/+uij5vtHpwBNpaaAIAihUOjixYukF5qy84bfgKmjo+PkyZMHf763tydJ0sbGhhtyzKk9JUIQBCKzorUUbA5EUXz8+DH+eCt6PGg0qNNrLpOTk/iDodEpFVQjmN7/xyyaUE0RQoIgcBw3Pj5OdJUkSUZ23kiN6fDwcM1t3u3t7Xw+755vDLWnRBCp6ePHj5tss5do7WXdESRkV4kGhmH8fv/ExAT+JclkslgsulBQXTilmkDnOxfSnGqKEBIEgWGY0dFR/EuMe1N8Y3ry5MmaxvTFixfr6+uffvrpl19+aXAyZkHtKRFEagpN762bjM0QrQygrVMTwDBMOBweGRnBv2RqasoN73Gqcc/y3bs0rZqir7bdLF3/apAa03o5pjs7O48ePXLbE5baUyKIziLl8/nmsKeiKD569Ah/fG9vr6VHkOx8UcIwzIULF4iKg7777rs2eEH7i2NYjaqqhUIBczCUy7CNZlZThJAgCL29vfjjjRRawjem9XJM9/b2/vSnP62vr7vHmALUnuJD+pWTJMkrO2yNKZVKRFWQrF7m2vbeFGAYhiiNdWdn57333rP6n55op6RYLFo3ExPBt9HGa3QQ0eRqigg3lPRtv+g4ylvz/MXOzk42m/3ss890zMFqqD3Fh+gRhhDKZDJet6eiKBKditeaDVuH/UvSlpaWt99+G3+8LMuLi4uWCiqRXfZEAjSR5Nucf+Xh6g2uwvgbU4SQqqqDg4PRaNS8eR2Coih/+MMfcEZSe0rE4OAgvrpIkkRkZ92GKIqyLBPt60COuHVTQk7U49VR0mFubs7v94fDYYuqOhCpqSiKLm+wqqoq0aHxU6dOWTeZgxCoafXy2Vs51/i1yHVgVo4pQuj48ePWtdSoSS6Xw//LoaWRMBEEQVVVIq+WSqVsaLhrHfPz8/iDm+b80UGgpMP6+jr+u73p6em3337buiq+Pp8Pc2vUE950YWEBf3BLS4t1MzlIXTWt7jz6/Pnz6uZo8MLDu5FvOsZzTJ0iEolsbGxgfkGpPcWHYZhQKISfTgrVuJAHw0oUxZWVFaJLBgcHPfdr4sMwzMTExK9//Wv8S6CKrxVqCueN8R9Q2Wx2aGjI9GmYBf4aBSEEPe/w+Xx1td4fvdzTg3OHr9VUFEVofLa9vf3nP/9ZluV6lsVzx/otNaYff/wx/vhYLGZD8zUiOjs7qT01HbCnRMUZoPuCt5qeiqJYKpWIek709va6eS/RLK5du3bjxg388bdu3ZqcnLTib2ZgYABfTT/88MNoNOrOfyBVVZPJJP748+fP4/win6+ubiWT8m9/+3/z8y9qPQZfDofbv/c9/p13TnznO41v9fUpJFmWZ2Zm5ufnM5mMJEmNH68eOtZPJPyk50dUVcX/ewgGg/b3nzqUSCSCvxql9hQfhmFIz9qkUimib5SzwPo7lUoRXdXf3++h5YI+GIYhPZFULpenp6etOJFElCWys7NTKBRceMhcVdVsNkuUFIvzi//5v//7f3/2s+yPflT+8MOaUooQ+rxQWPv3f1+enHzyH//R+G5fqylpRTRPPFVFUSQqHEpELpcj2uN67bXXevB2DGwG7CnmYHq4FxM4aEPaJmVmZsYTggpSOjMzQ3RVPB63aD5uA04kEZV0KBQKFh3xJZrG9PS06RMwzu7uLpExHRsbO3TMs3v3cn/3dxt4bfU+E8Xcj3/8+J//ucGYv8iQIRLU+/fvuz/mEUk5e9Iup6qqYvYKRQj5/X576kjogNpTixAEQYd+uF9Q9UlpKBQyq++hJ4CSDkQP1bm5OdOLDjIMc/78eaJLksmkq+ypqqq3bt0iumRgYKDxNu/z//mfT375y2f37uHf80WlIv785w0c6tdqKgjCwMAA/q0VRVlZWXF5zBO9uOrp6cEPdVJjeu7cOTe/bqT21CI4jtORWzkzM6MoijuDS5+UIoRisdjRkVKAYZhLly4RXQJFB80Vs5aWFqK8u2w26579XlVVP/roo3K5jH/J2NjYoad5n96+vUVidoG9L75Y/dd/rafBf+FNOY7TURTNtTGvKEo6nca/hOjgftMYU4DaU4uA/V7SbQ+E0OzsrAsboMKxIx1SqqOnU3NA+gIVIXTjxg1zq/gyDEO6RzI9Pe2G0vyqqi4uLhJlxSCEDs2a/b/5+dV/+Rd9U/osn5d/+9uaf/QXaioIwvDwMNGtoYyLC2NeVdXZ2Vn8S4iktMmMKUDtqUXo2+9FCM3Pz6fTaffEFyTDkB47QgjF43FPZ9MaAV6gJhIJoqtM7yve0tJCOoepqSlnBVVV1enpafxSGADO2mUzmfzSQMm5zf/6r8I//uPBn++vLMhxHGludSaTcVvM61g+E+XANZkxBag9tRTS/oCAJEnvv/++4yZVFMUHDx7cuXOHKBkGGBwcPFKvSw/CMEw0GiXaa5Vl2dyXlzAHotJICKGpqSmrax/WRFVVRVF+85vfECWYIoRGRkYOrYPx+erqxu9+Z2R6n6+ufvqf/3nw5/vVVBAEHa95IOZLpZLjgqpv+UyUA9eUxhQg6t5M7Sk+0B9Qn6AihObn5+/cubO0tGR/fImiuLS0lEqlUqmUjrxtWKQeZSkFGIZJJBJERdiz2ay5fcVJ6/IDc3NzN2/efPr0qT2aqqoqvCi9ceMGaZM4v99/4cIFnCf5tuEHl7K8fLDaQ41aSLDJrmM/J5VKBQIBRVHs39WBp4wsy+l0mjTmWZYlyoFrSmOqEY1GMXO9qT0lQhAEURTHx8d1vHRECFUqldnZWZZlY7EYHBO1NMS0gMrn87obK1EprYZhmB/84AdEJR2SyeSJEydMLDoIL3Gn8HJCNMrl8s2bN6PRaDweb2lpsai2A6j14uIi6dauxtWrV22rO7FXq0NRDTWFsB8dHSWqvQmUSiWI+bNnz0IUWR1L8IpUkiSisqjVJBKJI3uUdx8wVfzKKbQ0EhEGBRUhVKlUICpDoRAsW5GpIQYiqiiKJEk6NnWricfjR3yD9yA6xAyKDiKETNEJeImrQ1DRV145HA6fP38eCiOYMiUQ0XK5vLCwgP/kOci1a9dsrsp7kNp1eiEGiPpgVFOpVDKZTCaT4ThOFMXOzk5zwx5ivlQqybJcLBaNOKR4PE70nWhuYwpQe2odmqDeu3fPSDNdSZIg+4vneUmSNPuiI8QgmlRVLRaLsiybUvr84sWLR/bYUQN0NJlBCN24ceP69evmzkGfoCKECoUCvMsMh8MDAwOnTp0CDSN9iiKEdnd319fXl5eXSV+OHgSk1PGCiHWr3kMkMAxDlGSyD0VRQFYRQizL8jx//Pjx1tbWtra2apmpF3XVb4lKpdLu7q5Wgt+U0ruky+fmNqYAtadWo0UWaU/QmoD+QZBCiKGqMiwHSwdALW7t2kqlYlY0aZ8I+QlUSmsCTWaghx3+Ve+9996VK1fMUguDggposooQ8vv9PM8Hg0E45aRJrEa5XIaEUVmWt7e3ZVkmyh9tgN/vv3r1qhukFDXuyAbx0NbWpuMd6kEqlUrNWgqNszKsK1g/Pj5OGvOKojS9MQWoPbUa+OJ1dnbqO91TEy3EiIqWmEgsFguFQlRHGwMlHYheoEJfcRObj4Kgkpbmr4cmljYTjUYTiYSOv5O/4rgvjT21vnHixMEf7j/Tuw9IPB8fH7dOGCoNseITQ6HQ5cuXSaU0l8stLS3hj/eiMQUikciZM2fwx9PDvfoQBOHcuXNvvfWWp1uFAzzPj4+PUynFpKWlZXJykuiSubk5c+sTQWn+69evE6XuuIeJiQl9UvpyT0/wu9818tEvHTsW/O53D7ZpO7xbuLYxJcuyjnNJroJl2TfeeEPf4QhFUfDXX542pgC1p/YAX8Xe3t7FxUVPtGveB8uyR7k4gz4YhvH7/RMTE0Ql5k3vKw73SSQSAwMDRnZ9bcb46WL+nXee3r6tewL+v/mboVr5poerKQChcvny5XQ67dQ+kkGMnNcnNaaCIHjUmAL07amdaAtWRVEWFxeNnE6yE47jBgYGeJ6nOqoD6OONv2YFrOgrDru+169fN5KdYg88zycSCb/fb/BvoO211wJvvlm6e1fnNN55p+bPcdUUVZ0VGhwczOfzBg/Q24Yp6TpExpRlWaIyCK6F2lM7gS8nx3GqqkKPYadnVJdAIDA8PEz9qEGgpAPpkRwr+orD3YaHh4eHh92pqWbpKPDN3t7Q3//9s3v36vU0bUDn1av+N9+s+UcEagpo6+j+/n5JklZXV127lOZ5vre313jSG6kxHRoaagKXRu2pI2jxFYvF3BZfHMd961vfCoVC9MiuWUB9IqKjQNBXfGJiwvRTrNWams1mFxYWHDlbtI+RkZHz58+bfmr35MSE8E//lP/pT4muOvGd7/T85CffrPPlJ1ZTQLN6UDyhWCy6J+w1EUUmZbgeTWMKdHd3Yx5jpvbURPbFlyRJ6+vrTsUXFVFL0VHSAfqKm3jEtxq459DQUDQa3d3dXV5eXl5etl9WTS8TcZCOS5deOnYs/7Of7X3xBc749u9978wvfnG8frNYnWqqAdHV19enVVHZ2NiwOfJZlg0GgzzPG8lhb8ARNKZAJBIhqlaxtLRE2peY0ph98WVKxRIcOI6DmLKhiuERR19Jh7m5OZ7nSTuUkE6MYZjR0VFoLFYoFERRLBQKpOVz8QmHw6dOnQqHw5C3anUK6TcFIfQP//BNQZD+7d9KH3zQYORfcVzPT3/acelS22uvNRj20t7entmT/LrqApRc0JLEkeH8UUhO1VLUtSoQlkY7afpH06gpOtq/u2vRqhdtbm5qIYb0BhfEVDAYbGtrCwQC7e3tVixJzYIoRcQNGf2Y6Et9sf8XhHkWi8Vnz549efIEMk116KvP53v55Ze1mg/hcBh+7sg/2XYupywvb/zud5vJ5L481NZIpPNv/7Y9kfjr0dFD72OJmtajurZRdU2WxmjhDbgzyCkUZ6kOLkVRnj9/3nh8dZkkGlMU3VSvA4rFYmNl1VQTuXKtc7AtDELoYF5pPWxVUwqFQqFQmpJDaiFRKBQKhUI5lP8HlQz3R0IEsNkAAAAASUVORK5CYII=">
+          <div class="sheet-fields" id="sheetFields"></div>
+          <div class="sheet-extra" id="sheetExtra"></div>
+        </div>
+      </div>
+      <div class="example-badge" id="exampleBadge">Showing a past order as an example — edit any field, or start a new blank order.</div>
+    </div>
+  </div>
+
+  <div class="recent">
+    <h2>Recent orders</h2>
+    <p class="sub">Saved on this device only — the downloaded PDF is your real record. Click a card to reopen it.</p>
+    <div class="recent-list" id="recentList"></div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  var LOGO_DATA_URI = "data:image/png;base64,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";
+
+  var FIELD_IDS = ["orderNo","store","customer","orderDate","dueDate","style","metal",
+    "widthMm","heightMm","center","sign","size","iid","iod","oid","ood","price","notes",
+    "stoneDetail","storeAddress","storePhone","shipTo","invoiceDate","shipping"];
+
+  var STORAGE_KEY = "orderBench.recentOrders.v1";
+  var LAST_NO_KEY = "orderBench.lastOrderNo";
+
+  // Metal / Style dropdowns: a fixed starter list plus anything added with
+  // "+ Add new…", which is remembered here on this device for next time.
+  var METAL_BUILTINS = ["18K Yellow", "18K Red", "18K Grey", "PT950", "Stainless"];
+  var STYLE_BUILTINS = [
+    "LB00/R", "LB00/T", "LB00/F", "LB00/R CF", "LB00/T CF", "LB00/F CF",
+    // Pulled from your price sheet (Cal/PL tabs) — these have no saved diameter
+    // formula or price lookup yet, so they'll need IOD/OID/OOD and Price entered
+    // by hand until you give me the numbers to wire up.
+    "LB00X", "LB01", "LB01/D", "AC01", "AC02", "AC01 Fancy Cut", "AC02 Fancy Cut", "AC03", "AB01", "AB01/E", "AB02", "AB02/D", "HB/F",
+    // AE01 has a saved diameter formula and price/carat lookup (by finger size).
+    "AE01"
+  ];
+  var METAL_CUSTOM_KEY = "orderBench.customMetals";
+  var STYLE_CUSTOM_KEY = "orderBench.customStyles";
+
+  function loadCustomList(key) {
+    try { return JSON.parse(localStorage.getItem(key) || "[]"); } catch (e) { return []; }
+  }
+  function saveCustomList(key, arr) {
+    try { localStorage.setItem(key, JSON.stringify(arr)); } catch (e) {}
+  }
+  function sameOption(a, b) { return a.trim().toLowerCase() === b.trim().toLowerCase(); }
+
+  function rememberOption(key, builtins, value) {
+    value = (value || "").trim();
+    if (!value) return;
+    var known = builtins.concat(loadCustomList(key));
+    if (known.some(function (v) { return sameOption(v, value); })) return;
+    var custom = loadCustomList(key);
+    custom.push(value);
+    saveCustomList(key, custom);
+  }
+
+  function comboOptionsList(key, builtins) {
+    var custom = loadCustomList(key).filter(function (v) {
+      return !builtins.some(function (b) { return sameOption(b, v); });
+    });
+    return builtins.concat(custom);
+  }
+
+  // Store address book: the Bill-to address and phone on an invoice are the
+  // same every time you order from a given store, so they're remembered here
+  // (keyed by store name, parenthetical dropped) and offered back the next
+  // time that store name is entered — instead of retyping every order.
+  var STORE_ADDRESS_BOOK_KEY = "orderBench.storeAddressBook.v1";
+
+  function addressBookKey(storeRaw) {
+    return (storeRaw || "").replace(/\(.*?\)/g, "").trim().toLowerCase();
+  }
+  function loadAddressBook() {
+    try { return JSON.parse(localStorage.getItem(STORE_ADDRESS_BOOK_KEY) || "{}"); } catch (e) { return {}; }
+  }
+  function saveAddressBook(book) {
+    try { localStorage.setItem(STORE_ADDRESS_BOOK_KEY, JSON.stringify(book)); } catch (e) {}
+  }
+  function lookupStoreAddress(storeRaw) {
+    var key = addressBookKey(storeRaw);
+    if (!key) return null;
+    return loadAddressBook()[key] || null;
+  }
+  function rememberStoreAddress(storeRaw, address, phone) {
+    var key = addressBookKey(storeRaw);
+    if (!key || (!address && !phone)) return;
+    var book = loadAddressBook();
+    book[key] = { address: address || "", phone: phone || "" };
+    saveAddressBook(book);
+  }
+
+  function escapeHtml(s) {
+    return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  }
+
+  function populateComboSelect(selectEl, key, builtins, selectedValue) {
+    var options = comboOptionsList(key, builtins);
+    if (selectedValue && !options.some(function (v) { return sameOption(v, selectedValue); })) {
+      options = options.concat([selectedValue]);
+    }
+    var html = '<option value="">Select…</option>' + options.map(function (v) {
+      var esc = escapeHtml(v);
+      return '<option value="' + esc + '">' + esc + "</option>";
+    }).join("");
+    html += '<option value="__add__">+ Add new…</option>';
+    selectEl.innerHTML = html;
+    selectEl.value = selectedValue || "";
+  }
+
+  function syncMetalPickerFromValue(value) {
+    populateComboSelect($("metalSelect"), METAL_CUSTOM_KEY, METAL_BUILTINS, value || "");
+    $("metal").value = value || "";
+    $("metalAddRow").hidden = true;
+  }
+
+  function syncStylePickerFromValue(value) {
+    populateComboSelect($("styleSelect"), STYLE_CUSTOM_KEY, STYLE_BUILTINS, value || "");
+    $("style").value = value || "";
+    $("styleAddRow").hidden = true;
+  }
+
+  var EXAMPLE = {
+    orderNo: "2602501", store: "I. Gorman", customer: "Chapman",
+    orderDate: "2026-01-15", dueDate: "2026-02-19",
+    style: "LB00/R", metal: "18K Yellow", widthMm: "6", heightMm: "2.3",
+    center: "", sign: "Dia/Ruby", size: "JP21",
+    iid: "19.75", iod: "21.35", oid: "23.15", ood: "24.35",
+    price: "2890", notes: "",
+    stoneDetail: "0.01ct DEF/VVS\n0.01ct Top Red Ruby",
+    storeAddress: "1133 20th Street, NW LI1\nWashington, DC 20036",
+    storePhone: "202.775.8544", shipTo: "",
+    invoiceDate: "2026-02-23", shipping: "33"
+  };
+
+  function $(id) { return document.getElementById(id); }
+
+  function getFormData() {
+    var data = {};
+    FIELD_IDS.forEach(function (id) { data[id] = $(id).value.trim(); });
+    return data;
+  }
+
+  function setFormData(data) {
+    FIELD_IDS.forEach(function (id) { $(id).value = data[id] || ""; });
+    syncSizePickerFromValue(data.size || "");
+    syncMetalPickerFromValue(data.metal || "");
+    syncStylePickerFromValue(data.style || "");
+    updateCenterRangeUI();
+    updateHeightPickerUI();
+    updateWidthPickerUI();
+  }
+
+  // Ring Sizer Chart — Japan size / mm and USA size / mm, from the shop's own chart.
+  var JP_CHART = {
+    1: 13.05, 2: 13.40, 3: 13.75, 4: 14.05, 5: 14.40, 6: 14.75, 7: 15.05, 8: 15.40,
+    9: 15.75, 10: 16.05, 11: 16.40, 12: 16.75, 13: 17.05, 14: 17.40, 15: 17.75,
+    16: 18.05, 17: 18.40, 18: 18.75, 19: 19.05, 20: 19.40, 21: 19.75, 22: 20.05,
+    23: 20.40, 24: 20.75, 25: 21.05, 26: 21.40, 27: 21.75, 28: 22.05, 29: 22.40, 30: 22.75
+  };
+  var US_CHART = {
+    2: 13.31, 2.25: 13.51, 2.5: 13.72, 2.75: 13.92, 3: 14.12, 3.25: 14.33, 3.5: 14.53,
+    3.75: 14.73, 4: 14.94, 4.25: 15.14, 4.5: 15.34, 4.75: 15.54, 5: 15.75, 5.25: 15.95,
+    5.5: 16.15, 5.75: 16.36, 6: 16.56, 6.25: 16.76, 6.5: 16.97, 6.75: 17.17, 7: 17.37,
+    7.25: 17.58, 7.5: 17.78, 7.75: 17.98, 8: 18.19, 8.25: 18.39, 8.5: 18.59, 8.75: 18.80,
+    9: 19.00, 9.25: 19.20, 9.5: 19.41, 9.75: 19.61, 10: 19.81, 10.25: 20.02, 10.5: 20.22,
+    10.75: 20.42, 11: 20.62, 11.25: 20.83, 11.5: 21.03, 11.75: 21.23, 12: 21.44,
+    12.25: 21.64, 12.5: 21.84, 12.75: 22.05, 13: 22.25, 13.25: 22.45, 13.5: 22.66,
+    13.75: 22.86, 14: 23.06
+  };
+  // Europe (EU) ring size = circumference of the inner diameter, in mm, in
+  // half-size increments — so mm = size / π. Sizes 40–65 cover the shop's
+  // working range.
+  var EU_CHART = {
+    40: 12.73, 40.5: 12.89, 41: 13.05, 41.5: 13.21, 42: 13.37, 42.5: 13.53,
+    43: 13.69, 43.5: 13.85, 44: 14.01, 44.5: 14.16, 45: 14.32, 45.5: 14.48,
+    46: 14.64, 46.5: 14.80, 47: 14.96, 47.5: 15.12, 48: 15.28, 48.5: 15.44,
+    49: 15.60, 49.5: 15.76, 50: 15.92, 50.5: 16.07, 51: 16.23, 51.5: 16.39,
+    52: 16.55, 52.5: 16.71, 53: 16.87, 53.5: 17.03, 54: 17.19, 54.5: 17.35,
+    55: 17.51, 55.5: 17.67, 56: 17.83, 56.5: 17.98, 57: 18.14, 57.5: 18.30,
+    58: 18.46, 58.5: 18.62, 59: 18.78, 59.5: 18.94, 60: 19.10, 60.5: 19.26,
+    61: 19.42, 61.5: 19.58, 62: 19.74, 62.5: 19.89, 63: 20.05, 63.5: 20.21,
+    64: 20.37, 64.5: 20.53, 65: 20.69
+  };
+
+  function jpSizeOptions() {
+    var out = [];
+    for (var i = 1; i <= 30; i++) out.push(i);
+    return out;
+  }
+  function usSizeOptions() {
+    var out = [];
+    for (var i = 0; i <= 48; i++) out.push(Math.round((2 + i * 0.25) * 100) / 100);
+    return out;
+  }
+  function euSizeOptions() {
+    var out = [];
+    for (var i = 0; i <= 50; i++) out.push(Math.round((40 + i * 0.5) * 10) / 10);
+    return out;
+  }
+
+  function populateSizeValueSelect(system) {
+    var sel = $("sizeValueSelect");
+    var opts = system === "US" ? usSizeOptions() : system === "EU" ? euSizeOptions() : jpSizeOptions();
+    var prefix = system === "US" ? "US " : system === "EU" ? "EU " : "JP ";
+    sel.innerHTML = '<option value="">Select…</option>' + opts.map(function (v) {
+      return '<option value="' + v + '">' + prefix + v + "</option>";
+    }).join("");
+  }
+
+  function updateSizeSystemUI(system) {
+    var isCustom = system === "custom";
+    $("sizeValueSelect").style.display = isCustom ? "none" : "";
+    $("sizeValueCustom").style.display = isCustom ? "" : "none";
+    if (!isCustom) populateSizeValueSelect(system);
+  }
+
+  // The chart gives an exact geometric mm figure, but a mandrel can only be
+  // set to certain graduations — 0.05mm for US sizes, 0.1mm for EU sizes —
+  // so the auto-filled IID rounds to the nearest one of those (up or down,
+  // whichever is closer — not always up). Confirmed against US4: chart
+  // gives 14.94mm → 14.95mm, and against 14.92→14.90 / 14.93→14.95 /
+  // 14.99→15.00.
+  function roundToStep(value, step) {
+    var steps = Math.round((value + 1e-9) / step);
+    return Math.round(steps * step * 1000) / 1000;
+  }
+
+  function recomputeSize(applyIid) {
+    var system = $("sizeSystem").value;
+    var label = "";
+    var mm = null;
+    if (system === "custom") {
+      label = $("sizeValueCustom").value.trim();
+    } else {
+      var v = $("sizeValueSelect").value;
+      if (v) {
+        label = (system === "US" ? "US" : system === "EU" ? "EU" : "JP") + v;
+        mm = system === "US" ? US_CHART[parseFloat(v)] : system === "EU" ? EU_CHART[parseFloat(v)] : JP_CHART[parseInt(v, 10)];
+        if (mm !== undefined && system === "US") mm = roundToStep(mm, 0.05);
+        else if (mm !== undefined && system === "EU") mm = roundToStep(mm, 0.1);
+      }
+    }
+    $("size").value = label;
+    if (mm !== null && applyIid !== false) {
+      $("iid").value = mm.toFixed(2);
+      var roundingNote = system === "US" ? ", rounded to the nearest 0.05mm" : system === "EU" ? ", rounded to the nearest 0.1mm" : "";
+      $("sizeChartNote").textContent = "IID filled from the " + (system === "US" ? "USA" : system === "EU" ? "Europe" : "Japan") +
+        " chart (" + mm.toFixed(2) + " mm" + roundingNote + ") — edit IID directly if this build differs.";
+      recomputeDerivedDiameters();
+    } else if (system === "custom") {
+      $("sizeChartNote").textContent = "Custom sizes don't auto-fill IID — enter it directly.";
+      refreshFromForm();
+    } else if (mm === null) {
+      $("sizeChartNote").textContent = "";
+      refreshFromForm();
+    }
+  }
+
+  function parseSizeString(str) {
+    if (!str) return { system: "JP", value: "" };
+    var m = /^JP(\d+(?:\.\d+)?)$/i.exec(str);
+    if (m) return { system: "JP", value: m[1] };
+    m = /^US(\d+(?:\.\d+)?)$/i.exec(str);
+    if (m) return { system: "US", value: m[1] };
+    m = /^EU(\d+(?:\.\d+)?)$/i.exec(str);
+    if (m) return { system: "EU", value: m[1] };
+    return { system: "custom", value: str };
+  }
+
+  function syncSizePickerFromValue(sizeStr) {
+    var parsed = parseSizeString(sizeStr);
+    $("sizeSystem").value = parsed.system;
+    updateSizeSystemUI(parsed.system);
+    if (parsed.system === "custom") {
+      $("sizeValueCustom").value = parsed.value;
+    } else {
+      $("sizeValueSelect").value = parsed.value;
+    }
+    recomputeSize(false);
+  }
+
+  // Per-style-family build math: how far IOD/OID/OOD sit past IID for that family.
+  // A family key matches on prefix, so one entry covers every profile-letter variant
+  // of that base style (LB00/R, LB00R, LB00T, LB00F, ...). Within a family, "variants"
+  // catch a marker anywhere in the code (like a trailing " CF" for comfort fit) and
+  // override the default offsets just for those. Add new families/variants here
+  // (and tell Claude the offsets) to extend this.
+  var STYLE_FAMILIES = {
+    "LB00": {
+      label: "LB00",
+      default: { iod: 1.6, oid: 1.8, ood: 1.2 }, // IOD = IID+1.6, OID = IOD+1.8, OOD = OID+1.2 (mm)
+      variants: [
+        { contains: "CF", label: "LB00 comfort fit", profile: { iod: 2.0, oid: 1.8, ood: 1.2 } }
+      ]
+    }
+  };
+
+  function normalizeStyleCode(styleRaw) {
+    return (styleRaw || "").trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
+  }
+
+  function findStyleProfile(styleRaw) {
+    var normalized = normalizeStyleCode(styleRaw);
+    if (!normalized) return null;
+    var bestFamilyKey = null;
+    Object.keys(STYLE_FAMILIES).forEach(function (key) {
+      if (normalized.indexOf(key) === 0 && (!bestFamilyKey || key.length > bestFamilyKey.length)) {
+        bestFamilyKey = key;
+      }
+    });
+    if (!bestFamilyKey) return null;
+    var family = STYLE_FAMILIES[bestFamilyKey];
+    var rest = normalized.slice(bestFamilyKey.length);
+    var variant = family.variants.filter(function (v) { return rest.indexOf(v.contains) !== -1; })[0];
+    return variant ? { label: variant.label, profile: variant.profile }
+      : { label: family.label, profile: family.default };
+  }
+
+  // AC01/AC02/AC03 are two-band eternity styles: the height (wall thickness)
+  // is set by the diamond, not a formula, so it's entered by hand. From IID +
+  // that height, IOD and OID sit at the same midpoint diameter (there's no
+  // separate stone-set layer to offset), and OOD is a full height further out.
+  var HEIGHT_DRIVEN_STYLE_PREFIXES = ["AC01", "AC02", "AC03"];
+
+  function heightDrivenPrefix(styleRaw) {
+    var normalized = normalizeStyleCode(styleRaw);
+    if (!normalized) return null;
+    return HEIGHT_DRIVEN_STYLE_PREFIXES.filter(function (p) { return normalized.indexOf(p) === 0; })[0] || null;
+  }
+
+  // AB01, AE01, and AB01/E are all simple single-wall bands: no separate
+  // IOD/OID layer, just IID (finger size) and a wall thickness (height) that
+  // defaults to a standard value but can be overridden per order.
+  // OOD = IID + 2×height.
+  var SIMPLE_BAND_STYLES = {
+    "AB01": { defaultHeight: 1.8 },
+    "AE01": { defaultWidth: 3, defaultHeight: 2.3 },
+    "AB01E": { defaultWidth: 2, defaultHeight: 1.8 } // AB01/E — normalizeStyleCode strips the "/"
+  };
+
+  function simpleBandConfig(styleRaw) {
+    var normalized = normalizeStyleCode(styleRaw);
+    return normalized ? (SIMPLE_BAND_STYLES[normalized] || null) : null;
+  }
+
+  // AE01's and AB01/E's width and height are a fixed standard spec, not a
+  // per-order pick — so both force-reset to spec whenever Style is freshly
+  // switched into one of them interactively (forceDefault=true), the same
+  // way AB01's height used to before it grew a dropdown. Re-rendering an
+  // order that's already one of these styles (forceDefault falsy — e.g.
+  // restoring a saved order) leaves whatever width/height it was saved with
+  // alone.
+  function applyFixedBandDefaultsUI(forceDefault) {
+    if (!forceDefault) return;
+    var cfg = SIMPLE_BAND_STYLES[normalizeStyleCode($("style").value)];
+    if (!cfg || cfg.defaultWidth === undefined) return;
+    $("widthMm").value = cfg.defaultWidth;
+    $("heightMm").value = cfg.defaultHeight;
+  }
+
+  function recomputeDerivedDiameters() {
+    var styleVal = $("style").value;
+    var iidVal = parseFloat($("iid").value);
+    var note = $("styleChartNote");
+
+    var hdPrefix = heightDrivenPrefix(styleVal);
+    if (hdPrefix) {
+      var heightVal = parseFloat($("heightMm").value);
+      if (!isNaN(iidVal) && !isNaN(heightVal)) {
+        var mid = Math.round((iidVal + heightVal) * 100) / 100;
+        var oodVal = Math.round((iidVal + 2 * heightVal) * 100) / 100;
+        $("iod").value = mid.toFixed(2);
+        $("oid").value = mid.toFixed(2);
+        $("ood").value = oodVal.toFixed(2);
+        note.textContent = "IOD/OID calculated as IID + height = " + mid.toFixed(2) + "mm, OOD as IID + 2×height = " + oodVal.toFixed(2) + "mm — height is set by the diamond, so enter it directly for this piece.";
+      } else if (!isNaN(iidVal)) {
+        note.textContent = "Enter the height (set by the diamond) to calculate IOD/OID/OOD.";
+      } else {
+        note.textContent = "";
+      }
+      refreshFromForm();
+      recomputePrice();
+      return;
+    }
+
+    var simpleCfg = simpleBandConfig(styleVal);
+    if (simpleCfg) {
+      var heightVal2 = parseFloat($("heightMm").value);
+      var standardNote = simpleCfg.defaultWidth !== undefined
+        ? ("width and height default to " + simpleCfg.defaultWidth + "mm / " + simpleCfg.defaultHeight + "mm standard")
+        : ("height defaults to " + simpleCfg.defaultHeight + "mm standard");
+      $("iod").value = "";
+      $("oid").value = "";
+      if (!isNaN(iidVal) && !isNaN(heightVal2)) {
+        var oodVal2 = Math.round((iidVal + 2 * heightVal2) * 100) / 100;
+        $("ood").value = oodVal2.toFixed(2);
+        note.textContent = "This style has no separate IOD/OID — OOD calculated as IID + 2×height = " + oodVal2.toFixed(2) + "mm (" + standardNote + "; edit it if this piece differs).";
+      } else if (!isNaN(iidVal)) {
+        $("ood").value = "";
+        note.textContent = "Enter height (" + standardNote + ") to calculate OOD.";
+      } else {
+        $("ood").value = "";
+        note.textContent = "";
+      }
+      updateCenterRangeUI();
+      refreshFromForm();
+      recomputePrice();
+      return;
+    }
+
+    var match = findStyleProfile(styleVal);
+    if (match && !isNaN(iidVal)) {
+      var profile = match.profile;
+      var iod = iidVal + profile.iod;
+      var oid = iod + profile.oid;
+      var ood = oid + profile.ood;
+      // Height is the band's radial wall thickness — half the total growth from
+      // IID out to OOD — rather than a fixed number per style.
+      var height = Math.round((ood - iidVal) / 2 * 100) / 100;
+      $("iod").value = iod.toFixed(2);
+      $("oid").value = oid.toFixed(2);
+      $("ood").value = ood.toFixed(2);
+      $("heightMm").value = height;
+      note.textContent = "IOD/OID/OOD calculated for " + match.label + " (+" + profile.iod + " / +" + profile.oid + " / +" + profile.ood + "mm off IID), height calculated as (OOD−IID)/2 = " + height + "mm — edit any of them directly if this piece differs.";
+    } else if (styleVal.trim() && !match) {
+      note.textContent = "No saved diameter formula for style “" + styleVal.trim() + "” yet — enter IOD/OID/OOD directly, and give me the offsets to add it.";
+    } else {
+      note.textContent = "";
+    }
+    refreshFromForm();
+    recomputePrice();
+  }
+
+  // Wholesale pricing for plain (stone-free) LB00 bands, from your price list.
+  // Width 4mm has two tiers, split at the US7/JP14 diameter (~17.4mm IID);
+  // widths 5-8mm price flat across the whole size range. Comfort fit adds 15%
+  // and isn't offered in Stainless.
+  // Updated from SATORU,INC. Pricelist 2026.3 (uploaded 2026-09-02).
+  var LB00_PRICE_TABLE = {
+    "PT950": { 4: { us7: 1440, us10: 1510 }, 5: 1730, 6: 1960, 7: 2220, 8: 2480 },
+    "18K": { 4: { us7: 1940, us10: 2020 }, 5: 2430, 6: 2830, 7: 3160, 8: 3480 },
+    "ST": { 4: 500, 5: 580, 6: 650, 7: 730, 8: 800 }
+  };
+  var CF_MARKUP = 1.15;
+  var US7_IID_THRESHOLD_MM = 17.4; // JP14 / US7 diameter from the ring sizer chart
+
+  // US/EU size selection now rounds IID to the nearest mandrel graduation
+  // (0.05mm / 0.1mm — see roundToStep), which can round a size DOWN a hair
+  // below its true chart value. Size-tier comparisons (this threshold, and
+  // fingerSizeBracket below) allow this much slack so a size doesn't
+  // accidentally drop into the tier below just because it rounded down.
+  var SIZE_ROUNDING_SLACK_MM = 0.05;
+
+  // AB01 plain bands: priced by width, height (1.8mm standard or 2.3mm thick),
+  // and for 2mm/3mm also split by size — up to JP14 (small) vs JP15 and up
+  // (large), same JP14/US7 threshold as LB00's 4mm tier. Your sheet only
+  // prices 4/5/8mm flat (one number, no small/large split) — tell me if those
+  // should split by size too. Raw wholesale figures from the Cal calc tab —
+  // AB01 isn't on the customer-facing PL price list, so these aren't
+  // pre-rounded to the "nice" numbers PL uses elsewhere (the final $10
+  // round-up smooths that out regardless).
+  var AB01_HEIGHT_OPTIONS = ["1.8", "2.3"];
+  var AB01_PRICE_TABLE = {
+    "PT950": {
+      "1.8": { 2: { small: 733, large: 798 }, 3: { small: 1057, large: 1122 }, 4: 1446, 5: 1770, 8: 2742 },
+      "2.3": { 2: { small: 928, large: 1025 }, 3: { small: 1316, large: 1446 }, 4: 1867, 5: 2288, 8: 3584 }
+    },
+    "18K": {
+      "1.8": { 2: { small: 1041, large: 1122 }, 3: { small: 1446, large: 1527 }, 4: 2013, 5: 2337, 8: 3876 },
+      "2.3": { 2: { small: 1284, large: 1446 }, 3: { small: 1851, large: 2013 }, 4: 2418, 5: 2904, 8: 4686 }
+    }
+  };
+
+  // AE01 and AB01/E are diamond eternity bands priced (and diamond-set) by
+  // finger size — a bigger finger takes more melee stones, so both price
+  // and total carat scale with size. Each is only sized at its own
+  // breakpoints (the shop's own spacing, not every US size); an in-between
+  // size — e.g. a JP13.5 finger, which sits between US6.5 and US7 — prices
+  // and carats at the next size down (US6.5). $ figures from the Cal calc
+  // tab (uploaded 2026-09-02); 18K isn't priced past US7 for either style
+  // there.
+  //
+  // Total carat is stored directly per size rather than computed by one
+  // shared formula, because the two styles turned out to work differently:
+  // AE01 = (37/36/.../31 melee stones × 0.03ct) − 0.01ct for the inside
+  // stone position left empty for the logo stamp — confirmed against US7
+  // (1.11 − 0.01 = 1.10ct) and US6.5 (1.08 − 0.01 = 1.07ct). AB01/E's sheet
+  // instead gives total diamond points directly (traced through the sheet's
+  // own formulas — e.g. US4's 39pt × $9/pt × 1.5 melee markup = $526.50,
+  // matching the wholesale math exactly), plus a flat +0.02ct on every size
+  // — confirmed against US4 (0.39 + 0.02 = 0.41ct).
+  var FINGER_SIZE_PRICED_STYLES = {
+    "AE01": {
+      breakpoints: ["3", "4", "5", "6", "6.5", "7", "8", "9"],
+      carat: { "3": 0.92, "4": 0.95, "5": 1.01, "6": 1.04, "6.5": 1.07, "7": 1.10, "8": 1.13, "9": 1.19 },
+      price: {
+        "PT950": { "3": 2836.24, "4": 2897.84, "5": 3056.68, "6": 3189.56, "6.5": 3286.80, "7": 3348.40, "8": 3445.64, "9": 3604.48 },
+        "18K": { "3": 3067.90, "4": 3129.50, "5": 3341.80, "6": 3403.40, "6.5": 3554.10, "7": 3615.70 }
+      }
+    },
+    "AB01E": { // AB01/E — normalizeStyleCode strips the "/"
+      breakpoints: ["3", "4", "5", "6", "6.5", "7"],
+      carat: { "3": 0.39, "4": 0.41, "5": 0.43, "6": 0.45, "6.5": 0.46, "7": 0.47 },
+      price: {
+        "PT950": { "3": 1552.70, "4": 1599.34, "5": 1646.70, "6": 1693.70, "6.5": 1717.20, "7": 1740.70 },
+        "18K": { "3": 1860.50, "4": 1907.50, "5": 1954.50, "6": 2001.50, "6.5": 2025.00, "7": 2048.50 }
+      }
+    }
+  };
+
+  function fingerSizeStyleConfig(styleRaw) {
+    return FINGER_SIZE_PRICED_STYLES[normalizeStyleCode(styleRaw)] || null;
+  }
+
+  // Finds the largest breakpoint (for this style) at or below the actual
+  // finger size (in mm) — the "floor to the next size down" rule.
+  // Metal-agnostic: whether that bracket has a price for the order's
+  // particular metal is checked separately, so a size that outgrows what
+  // 18K is priced for (PT950 goes further on both styles) correctly falls
+  // to manual entry instead of silently reusing a smaller 18K bracket's price.
+  function fingerSizeBracket(cfg, actualMm) {
+    if (!cfg || isNaN(actualMm)) return null;
+    var best = null;
+    cfg.breakpoints.forEach(function (key) {
+      var mm = US_CHART[parseFloat(key)];
+      if (mm !== undefined && actualMm >= mm - SIZE_ROUNDING_SLACK_MM && (!best || mm > best.mm)) {
+        best = { key: key, mm: mm };
+      }
+    });
+    return best;
+  }
+
+  function fingerSizeCaratForBracket(cfg, bracket) {
+    return cfg.carat[bracket.key];
+  }
+
+  // Every auto-filled wholesale price (including after any grey-gold/comfort-fit/
+  // fancy-cut markup is stacked on) rounds UP to the nearest $10 as the final step.
+  function roundUpToTen(x) {
+    return Math.ceil(x / 10) * 10;
+  }
+
+  function metalPriceKey(metalRaw) {
+    var v = (metalRaw || "").trim().toUpperCase();
+    if (v.indexOf("18K") === 0) return "18K";
+    if (v.indexOf("PT950") === 0 || v.indexOf("PLATINUM") === 0) return "PT950";
+    if (v === "ST" || v.indexOf("STAINLESS") === 0) return "ST";
+    return null;
+  }
+
+  // 18K grey (white/palladium) gold runs +15% over the sheet's regular 18K
+  // (Yellow/Red) price — a separate markup from comfort fit, and the two stack.
+  function isGreyGold(metalRaw) {
+    return /grey|gray/i.test(metalRaw || "");
+  }
+
+  // AC01/AC02 (priced identically) and AC03 are set by the center diamond's
+  // carat weight rather than width. Brackets and wholesale prices from your
+  // price list (Cal/PL tabs), uploaded 2026-09-02.
+  var AC_CENTER_PRICE_TABLE = {
+    "AC0102": {
+      label: "AC01/AC02",
+      pickerLabel: "center diamond size",
+      brackets: [
+        { key: "0.25-0.74", label: "0.25ct – 0.74ct" },
+        { key: "0.75-0.99", label: "0.75ct – 0.99ct" },
+        { key: "1.0-1.49", label: "1.0ct – 1.49ct" },
+        { key: "1.5-1.99", label: "1.5ct – 1.99ct" },
+        { key: "2.0-2.49", label: "2.0ct – 2.49ct" },
+        { key: "2.5-2.99", label: "2.5ct – 2.99ct" },
+        { key: "3.0-4.0", label: "3.0ct – 4.0ct" }
+      ],
+      price: {
+        "PT950": { "0.25-0.74": 2220, "0.75-0.99": 2290, "1.0-1.49": 2560, "1.5-1.99": 2830, "2.0-2.49": 3130, "2.5-2.99": 3300, "3.0-4.0": 3640 },
+        "18K": { "0.25-0.74": 2970, "0.75-0.99": 3150, "1.0-1.49": 3470, "1.5-1.99": 3790, "2.0-2.49": 4200, "2.5-2.99": 4440, "3.0-4.0": 4850 }
+      }
+    },
+    // Fancy-cut center stones on AC01/AC02 are priced by stone width instead
+    // of carat weight — same wholesale table, a separate bracket axis.
+    "AC0102_FANCY": {
+      label: "AC01/AC02 Fancy Cut",
+      pickerLabel: "fancy cut stone width",
+      brackets: [
+        { key: "4.0-4.49", label: "4.0mm – 4.49mm" },
+        { key: "4.5-4.99", label: "4.5mm – 4.99mm" },
+        { key: "5.0-5.49", label: "5.0mm – 5.49mm" },
+        { key: "5.5-5.99", label: "5.5mm – 5.99mm" }
+      ],
+      price: {
+        "PT950": { "4.0-4.49": 2900, "4.5-4.99": 3220, "5.0-5.49": 3580, "5.5-5.99": 3900 },
+        "18K": { "4.0-4.49": 4150, "4.5-4.99": 4500, "5.0-5.49": 4860, "5.5-5.99": 5240 }
+      }
+    },
+    "AC03": {
+      label: "AC03",
+      pickerLabel: "center diamond size",
+      brackets: [
+        { key: "0.2-0.74", label: "0.2ct – 0.74ct" },
+        { key: "0.75-0.99", label: "0.75ct – 0.99ct" },
+        { key: "1.0-1.5", label: "1.0ct – 1.5ct" }
+      ],
+      price: {
+        "PT950": { "0.2-0.74": 2050, "0.75-0.99": 2130, "1.0-1.5": 2400 },
+        "18K": { "0.2-0.74": 2800, "0.75-0.99": 2980, "1.0-1.5": 3300 }
+      }
+    }
+  };
+
+  function acStyleGroup(styleRaw) {
+    var normalized = normalizeStyleCode(styleRaw);
+    if (!normalized) return null;
+    var isFancy = normalized.indexOf("FANCY") !== -1;
+    if (normalized.indexOf("AC01") === 0 || normalized.indexOf("AC02") === 0) {
+      return isFancy ? "AC0102_FANCY" : "AC0102";
+    }
+    if (normalized.indexOf("AC03") === 0) return "AC03";
+    return null;
+  }
+
+  // Swaps the Center field between free text (default) and a diamond-size-range
+  // pulldown, for AC01/AC02/AC03 only, where the price is set by that range
+  // rather than a written stone description. Call whenever the style changes.
+  function updateCenterRangeUI() {
+    var input = $("center");
+    var select = $("centerRangeSelect");
+    var note = $("centerRangeNote");
+
+    var fsCfg = fingerSizeStyleConfig($("style").value);
+    if (fsCfg) {
+      select.hidden = true;
+      input.hidden = false;
+      var iidValFs = parseFloat($("iid").value);
+      var fsBracket = fingerSizeBracket(fsCfg, iidValFs);
+      var looksAutoFilled = /ct total/i.test(input.value.trim());
+      if (!fsBracket) {
+        if (looksAutoFilled) input.value = "";
+        note.textContent = isNaN(iidValFs)
+          ? "Pick a finger size to estimate total carat."
+          : "Finger size is below the smallest bracket on file (US" + fsCfg.breakpoints[0] + ") — enter carat directly.";
+        return;
+      }
+      var fsCarat = fingerSizeCaratForBracket(fsCfg, fsBracket);
+      input.value = fsCarat.toFixed(2) + "ct total";
+      note.textContent = "✓ Calculated from finger size (US" + fsBracket.key + " bracket) — edit directly if this order differs.";
+      return;
+    }
+
+    var group = acStyleGroup($("style").value);
+    if (!group) {
+      select.hidden = true;
+      input.hidden = false;
+      note.textContent = "";
+      return;
+    }
+    var table = AC_CENTER_PRICE_TABLE[group];
+    var currentCenter = input.value.trim();
+    var matched = table.brackets.filter(function (b) { return b.label === currentCenter; })[0];
+    select.innerHTML = '<option value="">Pick ' + table.pickerLabel + '…</option>' + table.brackets.map(function (b) {
+      return '<option value="' + b.key + '">' + b.label + "</option>";
+    }).join("");
+    select.value = matched ? matched.key : "";
+    if (!matched) input.value = "";
+    input.hidden = true;
+    select.hidden = false;
+    note.textContent = "Price for " + table.label + " is set by the " + table.pickerLabel + ".";
+  }
+
+  // Swaps Height between free entry (default) and a pulldown of the two
+  // thicknesses AB01 actually comes in — 1.8mm standard or 2.3mm thick —
+  // since the price differs between them. Call whenever the style changes.
+  //
+  // forceDefault=true means "the user just switched the Style field into
+  // AB01 interactively" — any leftover height value from whatever style
+  // was previously selected is irrelevant to AB01, so always reset to the
+  // 1.8mm standard rather than accidentally keeping a stray "2.3" behind.
+  // forceDefault falsy (the default) means "just re-rendering for a style
+  // that's already AB01" — e.g. restoring a saved/example order — so a
+  // valid stored height (1.8 or 2.3) is preserved instead of stomped.
+  function updateHeightPickerUI(forceDefault) {
+    var isAb01 = normalizeStyleCode($("style").value) === "AB01";
+    var input = $("heightMm");
+    var select = $("heightSelect");
+    if (!isAb01) {
+      select.hidden = true;
+      input.hidden = false;
+      return;
+    }
+    var current = input.value.trim();
+    var matched = !forceDefault && AB01_HEIGHT_OPTIONS.filter(function (h) { return h === current; })[0];
+    select.innerHTML = AB01_HEIGHT_OPTIONS.map(function (h) {
+      return '<option value="' + h + '">' + h + "mm</option>";
+    }).join("");
+    select.value = matched || AB01_HEIGHT_OPTIONS[0];
+    if (!matched) input.value = select.value;
+    input.hidden = true;
+    select.hidden = false;
+  }
+
+  // LB00 (the "00" series — LB00/R, LB00/T, LB00/F, their CF variants, LB00X)
+  // only ever comes in whole-mm widths, so Width swaps to a 4mm–10mm pulldown
+  // for that family instead of free numeric entry. No forced default — an
+  // unmatched/blank width just shows the placeholder, same as the Center
+  // diamond-size pulldown. Widths above the price list's current top (8mm)
+  // are still selectable; pricing just falls to manual entry ("?") until
+  // 9mm/10mm figures are on file.
+  var LB00_WIDTH_OPTIONS = [4, 5, 6, 7, 8, 9, 10];
+
+  function isLB00Series(styleRaw) {
+    return normalizeStyleCode(styleRaw).indexOf("LB00") === 0;
+  }
+
+  function updateWidthPickerUI() {
+    var isLb00 = isLB00Series($("style").value);
+    var input = $("widthMm");
+    var select = $("widthSelect");
+    if (!isLb00) {
+      select.hidden = true;
+      input.hidden = false;
+      return;
+    }
+    var current = parseFloat(input.value);
+    var matched = LB00_WIDTH_OPTIONS.filter(function (w) { return Math.abs(w - current) < 0.01; })[0];
+    select.innerHTML = '<option value="">Select width…</option>' + LB00_WIDTH_OPTIONS.map(function (w) {
+      return '<option value="' + w + '">' + w + "mm</option>";
+    }).join("");
+    select.value = matched !== undefined ? String(matched) : "";
+    input.hidden = true;
+    select.hidden = false;
+  }
+
+  function recomputePrice() {
+    var note = $("priceNote");
+    var data = { metal: $("metal").value, style: $("style").value, widthMm: $("widthMm").value };
+
+    function manual(msg) {
+      // Stamp "?" rather than leaving whatever number happened to be sitting
+      // in the field from the last style/width/size combo — a leftover real
+      // number here reads as if it came from the price list when it didn't.
+      $("price").value = "?";
+      note.textContent = "Price not auto-filled — " + msg;
+      note.className = "field-note is-manual";
+    }
+    function neutral(msg) {
+      note.textContent = msg || "";
+      note.className = "field-note";
+    }
+
+    // Price is always just the band price — Center/Sign stones are noted on the
+    // docket but don't factor into this number, so they never block auto-fill.
+    var metalKey = metalPriceKey(data.metal);
+    if (!metalKey) {
+      if (data.metal) manual("no wholesale price on file for “" + data.metal + "”. Enter price directly.");
+      else neutral("");
+      return;
+    }
+    var acGroup = acStyleGroup(data.style);
+    if (acGroup) {
+      var acTable = AC_CENTER_PRICE_TABLE[acGroup];
+      var acPrices = acTable.price[metalKey];
+      if (!acPrices) {
+        manual("no wholesale price on file for " + metalKey + " on " + acTable.label + ". Enter price directly.");
+        return;
+      }
+      var centerText = ($("center").value || "").trim();
+      var bracket = acTable.brackets.filter(function (b) { return b.label === centerText; })[0];
+      if (!bracket) {
+        manual("pick a " + acTable.pickerLabel + " above to price " + acTable.label + ".");
+        return;
+      }
+      var acBase = acPrices[bracket.key];
+      var acIsGrey = metalKey === "18K" && isGreyGold(data.metal);
+      if (acIsGrey) acBase = (acBase * 23) / 20;
+      $("price").value = roundUpToTen(acBase);
+      note.textContent = "✓ Auto-filled from your price list (" + acTable.label + ", " + metalKey + ", " + bracket.label +
+        (acIsGrey ? ", +15% grey gold" : "") + ") — edit directly if this order differs.";
+      note.className = "field-note is-auto";
+      refreshFromForm();
+      return;
+    }
+
+    if (normalizeStyleCode(data.style) === "AB01") {
+      var ab01ByHeight = AB01_PRICE_TABLE[metalKey];
+      var heightValAb = parseFloat($("heightMm").value);
+      var heightKeyAb = AB01_HEIGHT_OPTIONS.filter(function (h) { return Math.abs(parseFloat(h) - heightValAb) < 0.01; })[0] || null;
+      if (!heightKeyAb) {
+        manual("pick a height (1.8mm or 2.3mm) above to price AB01.");
+        return;
+      }
+      var ab01Row = ab01ByHeight && ab01ByHeight[heightKeyAb];
+      var widthAb = parseFloat(data.widthMm);
+      var widthAbWhole = Math.round(widthAb);
+      var widthAbEntry = ab01Row && Math.abs(widthAb - widthAbWhole) < 0.01 ? ab01Row[widthAbWhole] : null;
+      if (!widthAbEntry) {
+        if (!isNaN(widthAb)) manual("no wholesale price on file for a " + data.widthMm + "mm, " + heightKeyAb + "mm AB01 band. Enter price directly.");
+        else neutral("");
+        return;
+      }
+      var priceAb, ab01TierLabel = "";
+      if (typeof widthAbEntry === "object") {
+        var iidValAb = parseFloat($("iid").value);
+        if (isNaN(iidValAb)) {
+          manual("pick a size first so I can find the right AB01 price tier.");
+          return;
+        }
+        if (iidValAb <= US7_IID_THRESHOLD_MM + SIZE_ROUNDING_SLACK_MM) {
+          priceAb = widthAbEntry.small;
+          ab01TierLabel = ", up to JP14";
+        } else {
+          priceAb = widthAbEntry.large;
+          ab01TierLabel = ", JP15+";
+        }
+      } else {
+        priceAb = widthAbEntry;
+      }
+      var ab01IsGrey = metalKey === "18K" && isGreyGold(data.metal);
+      var ab01Base = ab01IsGrey ? (priceAb * 23) / 20 : priceAb;
+      $("price").value = roundUpToTen(ab01Base);
+      note.textContent = "✓ Auto-filled from your price list (AB01, " + metalKey + ", " + widthAbWhole + "mm, " + heightKeyAb + "mm" + ab01TierLabel +
+        (ab01IsGrey ? ", +15% grey gold" : "") + ") — edit directly if this order differs.";
+      note.className = "field-note is-auto";
+      refreshFromForm();
+      return;
+    }
+
+    var fsPriceCfg = fingerSizeStyleConfig(data.style);
+    if (fsPriceCfg) {
+      var fsLabel = data.style.trim();
+      var fsPrices = fsPriceCfg.price[metalKey];
+      if (!fsPrices) {
+        manual("no wholesale price on file for " + metalKey + " on " + fsLabel + ". Enter price directly.");
+        return;
+      }
+      var iidValFsPrice = parseFloat($("iid").value);
+      var fsB = fingerSizeBracket(fsPriceCfg, iidValFsPrice);
+      if (!fsB) {
+        if (isNaN(iidValFsPrice)) neutral("");
+        else manual("finger size is below the smallest " + fsLabel + " bracket on file (US" + fsPriceCfg.breakpoints[0] + "). Enter price directly.");
+        return;
+      }
+      var fsPrice = fsPrices[fsB.key];
+      if (fsPrice === undefined) {
+        manual("no wholesale price on file for " + metalKey + " at the US" + fsB.key + " bracket. Enter price directly.");
+        return;
+      }
+      var fsIsGrey = metalKey === "18K" && isGreyGold(data.metal);
+      var fsBase = fsIsGrey ? (fsPrice * 23) / 20 : fsPrice;
+      $("price").value = roundUpToTen(fsBase);
+      note.textContent = "✓ Auto-filled from your price list (" + fsLabel + ", " + metalKey + ", US" + fsB.key + " bracket" +
+        (fsIsGrey ? ", +15% grey gold" : "") + ") — edit directly if this order differs.";
+      note.className = "field-note is-auto";
+      refreshFromForm();
+      return;
+    }
+
+    var styleCode = normalizeStyleCode(data.style);
+    if (styleCode.indexOf("LB00") !== 0) {
+      if (data.style) manual("no wholesale price on file for style “" + data.style + "”. Enter price directly.");
+      else neutral("");
+      return;
+    }
+    var isCF = styleCode.indexOf("CF") !== -1;
+    var width = parseFloat(data.widthMm);
+    var widthWhole = Math.round(width);
+    var widthRow = LB00_PRICE_TABLE[metalKey] && Math.abs(width - widthWhole) < 0.01 ? LB00_PRICE_TABLE[metalKey][widthWhole] : null;
+    if (!widthRow) {
+      if (!isNaN(width)) manual("no wholesale price on file for a " + data.widthMm + "mm band. Enter price directly.");
+      else neutral("");
+      return;
+    }
+
+    var base, tierLabel = "";
+    if (widthWhole === 4) {
+      var iidVal = parseFloat($("iid").value);
+      if (isNaN(iidVal)) {
+        manual("pick a size first so I can find the right 4mm price tier.");
+        return;
+      }
+      if (iidVal <= US7_IID_THRESHOLD_MM + SIZE_ROUNDING_SLACK_MM) {
+        base = widthRow.us7;
+        tierLabel = ", ≤US7";
+      } else {
+        base = widthRow.us10;
+        tierLabel = ", US7–US10";
+      }
+    } else {
+      base = widthRow;
+    }
+
+    var isGrey = metalKey === "18K" && isGreyGold(data.metal);
+    if (isGrey) {
+      base = (base * 23) / 20; // ×1.15 via exact integer math, avoids float rounding drift
+    }
+
+    if (isCF) {
+      if (metalKey === "ST") {
+        manual("comfort fit isn't available in Stainless. Enter price directly.");
+        return;
+      }
+      base = (base * 23) / 20; // ×1.15 again — stacks with the grey-gold markup above
+    }
+
+    var extras = (isGrey ? ", +15% grey gold" : "") + (isCF ? ", +15% comfort fit" : "");
+    $("price").value = roundUpToTen(base);
+    note.textContent = "✓ Auto-filled from your price list (" + metalKey + ", " + widthWhole + "mm" + tierLabel +
+      extras + ") — edit directly if this order differs.";
+    note.className = "field-note is-auto";
+    refreshFromForm();
+  }
+
+  function formatDateDisplay(iso) {
+    if (!iso) return "";
+    var parts = iso.split("-");
+    if (parts.length !== 3) return iso;
+    var y = parts[0], m = parseInt(parts[1], 10), d = parseInt(parts[2], 10);
+    return m + "/" + d + "/" + y;
+  }
+
+  function formatMm(v) { return v === "" || v === null || v === undefined ? "" : v + "mm"; }
+
+  // Customer is "only if different from the store contact", so it rides on
+  // the same line as Store in parentheses rather than getting its own line —
+  // e.g. "Zales (Sarah Kim)".
+  function formatStoreWithCustomer(data) {
+    var store = data.store || "";
+    return data.customer ? (store + " (" + data.customer + ")") : store;
+  }
+
+  // Initials for the downloaded filename — e.g. "I. Gorman (Chapman)" → "IG".
+  // Any parenthetical (a second name/detail tacked onto Store) is dropped
+  // first so it doesn't get folded into the initials.
+  function storeInitials(storeRaw) {
+    var base = (storeRaw || "").replace(/\(.*?\)/g, "").trim();
+    var words = base.split(/[\s.]+/).filter(Boolean);
+    return words.map(function (w) { return w.charAt(0).toUpperCase(); }).join("");
+  }
+
+  function formatPrice(v) {
+    if (v === "" || v === null || v === undefined) return "";
+    var n = parseFloat(v);
+    if (isNaN(n)) return v;
+    var hasCents = Math.round(n * 100) % 100 !== 0;
+    return "$" + n.toLocaleString("en-US", { minimumFractionDigits: hasCents ? 2 : 0, maximumFractionDigits: 2 });
+  }
+
+  function line(label, value, bold) {
+    return '<div class="line"><span class="lbl' + (bold ? ' strong' : '') + '">' + label + ':</span>' +
+      '<span class="val">' + (value || "") + "</span></div>";
+  }
+
+  function splitLine(a, b) {
+    return '<div class="line split">' +
+      '<span class="pair"><span class="lbl">' + a.label + ':</span><span class="val">' + (a.value || "") + "</span></span>" +
+      '<span class="pair"><span class="lbl">' + b.label + ':</span><span class="val">' + (b.value || "") + "</span></span>" +
+      "</div>";
+  }
+
+  function renderPreview(data) {
+    var html = "";
+    html += line("Order No", data.orderNo);
+    html += line("Store", formatStoreWithCustomer(data));
+    html += line("Order date", formatDateDisplay(data.orderDate));
+    html += line("Due Date", formatDateDisplay(data.dueDate), true);
+    html += line("Style", data.style);
+    html += line("Metal", data.metal);
+    html += line("Center", data.center);
+    html += line("Size", data.size);
+    html += line("Sign", data.sign);
+    html += splitLine({ label: "Width", value: formatMm(data.widthMm) }, { label: "Height", value: formatMm(data.heightMm) });
+    html += line("Price", formatPrice(data.price));
+    html += splitLine({ label: "IID", value: formatMm(data.iid) }, { label: "IOD", value: formatMm(data.iod) });
+    html += splitLine({ label: "OID", value: formatMm(data.oid) }, { label: "OOD", value: formatMm(data.ood) });
+    $("sheetFields").innerHTML = html;
+
+    var extra = "";
+    if (data.notes) extra += '<div><span class="lbl">Notes:</span> <span class="val">' + data.notes + "</span></div>";
+    $("sheetExtra").innerHTML = extra;
+    $("sheetExtra").style.display = extra ? "flex" : "none";
+  }
+
+  function refreshFromForm() {
+    renderPreview(getFormData());
+  }
+
+  function suggestNextOrderNo() {
+    var last = localStorage.getItem(LAST_NO_KEY);
+    if (last && /^\d+$/.test(last)) {
+      return String(parseInt(last, 10) + 1);
+    }
+    return "";
+  }
+
+  function loadRecent() {
+    try {
+      return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+    } catch (e) { return []; }
+  }
+
+  function saveRecent(list) {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(list.slice(0, 50))); } catch (e) {}
+  }
+
+  function renderRecentList() {
+    var list = loadRecent();
+    var el = $("recentList");
+    if (!list.length) {
+      el.innerHTML = '<div class="recent-empty">No saved orders yet — download a PDF to add one here.</div>';
+      return;
+    }
+    el.innerHTML = list.map(function (item, i) {
+      return '<div class="recent-card" data-idx="' + i + '">' +
+        '<button class="del" data-idx="' + i + '" title="Remove">×</button>' +
+        '<div class="no">' + (item.orderNo || "—") + "</div>" +
+        '<div class="store">' + (item.store || "No store") + "</div>" +
+        '<div class="meta">' + (item.metal || "") + (item.metal && item.size ? " · " : "") + (item.size || "") + "</div>" +
+        "</div>";
+    }).join("");
+
+    Array.prototype.forEach.call(el.querySelectorAll(".recent-card"), function (card) {
+      card.addEventListener("click", function (ev) {
+        if (ev.target.classList.contains("del")) return;
+        var idx = parseInt(card.getAttribute("data-idx"), 10);
+        var list = loadRecent();
+        if (list[idx]) {
+          setFormData(list[idx]);
+          refreshFromForm();
+          $("exampleBadge").style.display = "none";
+          $("statusNote").textContent = "Loaded order " + (list[idx].orderNo || "");
+        }
+      });
+    });
+    Array.prototype.forEach.call(el.querySelectorAll(".del"), function (btn) {
+      btn.addEventListener("click", function (ev) {
+        ev.stopPropagation();
+        var idx = parseInt(btn.getAttribute("data-idx"), 10);
+        var list = loadRecent();
+        list.splice(idx, 1);
+        saveRecent(list);
+        renderRecentList();
+      });
+    });
+  }
+
+  function addToRecent(data) {
+    var list = loadRecent();
+    list.unshift(data);
+    saveRecent(list);
+    renderRecentList();
+  }
+
+  function generatePDF(data) {
+    var jsPDFCtor = window.jspdf && window.jspdf.jsPDF;
+    if (!jsPDFCtor) {
+      $("statusNote").textContent = "PDF library did not load — check your connection and try again.";
+      return;
+    }
+    // Full letter page, docket positioned in the top-right quarter — coordinates below
+    // are lifted directly from the original file's own PDF (logo image position, text
+    // column, 12pt Helvetica, 24pt line pitch), so this prints in the same spot, at the
+    // same size, with the same logo, every time.
+    var doc = new jsPDFCtor({ unit: "pt", format: "letter" });
+    var fieldX = 344.7;
+    var contentRight = 583.5;
+    var secondColX = fieldX + 95; // fixed second-column tab stop, matches the original's spacing
+    var ink = [0, 0, 0];
+
+    doc.addImage(LOGO_DATA_URI, "PNG", 390.8, 18, 150, 22);
+
+    var y = 71;
+    var lh = 24;
+    doc.setFontSize(12);
+    doc.setTextColor.apply(doc, ink);
+
+    function printLine(label, value, bold) {
+      doc.setFont("helvetica", bold ? "bold" : "normal");
+      doc.text(label + ": " + (value || ""), fieldX, y);
+      y += lh;
+    }
+
+    function printSplit(a, b) {
+      doc.setFont("helvetica", "normal");
+      doc.text(a.label + ": " + (a.value || ""), fieldX, y);
+      doc.text(b.label + ": " + (b.value || ""), secondColX, y);
+      y += lh;
+    }
+
+    printLine("Order No", data.orderNo);
+    printLine("Store", formatStoreWithCustomer(data));
+    printLine("Order date", formatDateDisplay(data.orderDate));
+    printLine("Due Date", formatDateDisplay(data.dueDate), true);
+    printLine("Style", data.style);
+    printLine("Metal", data.metal);
+    printLine("Center", data.center);
+    printLine("Size", data.size);
+    printLine("Sign", data.sign);
+    printSplit({ label: "Width", value: formatMm(data.widthMm) }, { label: "Height", value: formatMm(data.heightMm) });
+    printLine("Price", formatPrice(data.price));
+    printSplit({ label: "IID", value: formatMm(data.iid) }, { label: "IOD", value: formatMm(data.iod) });
+    printSplit({ label: "OID", value: formatMm(data.oid) }, { label: "OOD", value: formatMm(data.ood) });
+
+    if (data.notes) {
+      y += 10;
+      doc.setDrawColor(220, 213, 195);
+      doc.line(fieldX, y, contentRight, y);
+      y += 18;
+      doc.setFontSize(10.5);
+      doc.setFont("helvetica", "bold");
+      doc.text("Notes:", fieldX, y);
+      y += 14;
+      doc.setFont("helvetica", "normal");
+      var noteLines = doc.splitTextToSize(data.notes, contentRight - fieldX);
+      doc.text(noteLines, fieldX, y);
+    }
+
+    var initials = storeInitials(data.store);
+    var filename = "O#" + (data.orderNo || "docket") + (initials ? " " + initials : "") + ".pdf";
+    doc.save(filename);
+  }
+
+  var INVOICE_MONTHS = ["JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE",
+    "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"];
+
+  function formatDateInvoiceStyle(iso) {
+    if (!iso) return "";
+    var parts = iso.split("-");
+    if (parts.length !== 3) return iso;
+    var y = parts[0], m = parseInt(parts[1], 10), d = parseInt(parts[2], 10);
+    return (INVOICE_MONTHS[m - 1] || "") + " " + d + ", " + y;
+  }
+
+  function textLines(raw) {
+    return (raw || "").split("\n").map(function (s) { return s.trim(); }).filter(Boolean);
+  }
+
+  // Falls back to the docket's Sign field (e.g. "Dia/Ruby") when no detailed
+  // per-stone breakdown has been entered, so the invoice always shows
+  // something in the Stones column rather than leaving it blank.
+  function invoiceStoneLines(data) {
+    var lines = textLines(data.stoneDetail);
+    if (!lines.length && data.sign) lines = [data.sign];
+    return lines;
+  }
+
+  // Same fixed letter-page invoice every time — logo, "From" business block,
+  // table borders and totals box, and the boilerplate comments/footer text
+  // are all positioned from the coordinates of the shop's own invoice
+  // template, so this lines up the same way that template did.
+  function generateInvoicePDF(data) {
+    var jsPDFCtor = window.jspdf && window.jspdf.jsPDF;
+    if (!jsPDFCtor) {
+      $("statusNote").textContent = "PDF library did not load — check your connection and try again.";
+      return null;
+    }
+    var doc = new jsPDFCtor({ unit: "pt", format: "letter" });
+    var pageRight = 584.9;
+    var ink = [0, 0, 0];
+    doc.setTextColor.apply(doc, ink);
+
+    doc.addImage(LOGO_DATA_URI, "PNG", 231.1, 36, 150, 22);
+
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(20);
+    doc.setTextColor(137, 137, 137);
+    doc.text("Invoice", 501.9, 69.8);
+    doc.setTextColor.apply(doc, ink);
+
+    // From (fixed shop info — not order data)
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "normal");
+    doc.text("From:", 40, 112.6);
+    doc.setFont("helvetica", "bold");
+    doc.text("SATORU, Inc", 75.9, 112.6);
+    doc.setFont("helvetica", "normal");
+    doc.text("275 Fair Street, Suite 20", 58, 128.0);
+    doc.text("Kingston, NY 12401", 58, 143.4);
+    doc.text("845.616.8631", 58, 158.8);
+
+    // Invoice # / date, right-aligned so it holds up for any order number length
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(12);
+    doc.text("INVOICE #" + (data.orderNo || ""), pageRight, 144.8, { align: "right" });
+    doc.setFontSize(10);
+    doc.text("DATE: " + formatDateInvoiceStyle(data.invoiceDate), pageRight, 173.4, { align: "right" });
+
+    // To: store + customer + billing address + phone
+    var toY = 208.3;
+    var toLh = 15.4;
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text("To: " + (data.store || ""), 40, toY);
+    doc.setFont("helvetica", "normal");
+    toY += toLh;
+    if (data.customer) { doc.text("Customer:" + data.customer, 57.1, toY); toY += toLh; }
+    textLines(data.storeAddress).forEach(function (l) { doc.text(l, 57.1, toY); toY += toLh; });
+    if (data.storePhone) { doc.text(data.storePhone, 57.1, toY); toY += toLh; }
+
+    // Ship to — defaults to "SAME" when left blank
+    var shipY = 208.3;
+    doc.setFont("helvetica", "bold");
+    doc.text("SHIP TO:", 310, shipY);
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10);
+    shipY += toLh;
+    var shipLines = textLines(data.shipTo);
+    if (!shipLines.length) shipLines = ["SAME"];
+    shipLines.forEach(function (l) { doc.text(l, 310, shipY); shipY += toLh; });
+
+    // Item table — one line item per order, matching how this tool is used.
+    var tableTop = 339, tableHeaderRule = 360.5, tableBottom = 424.5;
+    var colX = [42.2, 119.7, 175.6, 248.8, 386.5, 528.5, pageRight];
+    var colCenter = colX.slice(0, -1).map(function (x, i) { return (x + colX[i + 1]) / 2; });
+    var rowMidY = (tableHeaderRule + tableBottom) / 2;
+
+    doc.setDrawColor(0, 0, 0);
+    doc.setLineWidth(0.75);
+    doc.rect(colX[0], tableTop, pageRight - colX[0], tableBottom - tableTop);
+    doc.line(colX[0], tableHeaderRule, pageRight, tableHeaderRule);
+    [1, 2, 3, 4, 5].forEach(function (i) { doc.line(colX[i], tableTop, colX[i], tableBottom); });
+
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "bold");
+    ["Style", "Size", "Metal", "Stones", "Note", "TOTAL"].forEach(function (label, i) {
+      doc.text(label, colCenter[i], 346.2, { align: "center" });
+    });
+
+    doc.setFont("helvetica", "normal");
+    doc.text(data.style || "", colCenter[0], rowMidY, { align: "center" });
+    doc.text(data.size || "", colCenter[1], rowMidY, { align: "center" });
+    doc.text(data.metal || "", colCenter[2], rowMidY, { align: "center" });
+
+    var stoneLines = invoiceStoneLines(data);
+    var stoneLh = 13.2;
+    var stoneY = rowMidY - ((stoneLines.length - 1) / 2) * stoneLh;
+    stoneLines.forEach(function (l) { doc.text(l, colX[3] + 4.2, stoneY); stoneY += stoneLh; });
+
+    var noteLines = [];
+    if (data.widthMm) noteLines.push("Width: " + data.widthMm + "mm");
+    if (data.heightMm) noteLines.push("Height:" + data.heightMm + "mm");
+    var noteY = rowMidY - ((noteLines.length - 1) / 2) * stoneLh;
+    noteLines.forEach(function (l) { doc.text(l, colX[4] + 4.2, noteY); noteY += stoneLh; });
+
+    doc.setFont("helvetica", "bold");
+    doc.text(formatPrice(data.price), pageRight - 6, rowMidY, { align: "right" });
+
+    // Totals box — a continuation of the TOTAL column, down through Subtotal /
+    // Shipping & handling / Total due.
+    var boxLeft = colX[5], boxBottom = 486.2;
+    doc.line(boxLeft, tableTop, boxLeft, boxBottom);
+    doc.line(pageRight, tableTop, pageRight, boxBottom);
+    var totalsLh = 20.3;
+    var rowY = 430.7;
+    var priceNum = parseFloat(data.price);
+    var shippingNum = parseFloat(data.shipping);
+    if (isNaN(shippingNum)) shippingNum = 0;
+    var totalDue = (isNaN(priceNum) ? 0 : priceNum) + shippingNum;
+
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    doc.text("SUBTOTAL", boxLeft - 8, rowY, { align: "right" });
+    doc.setFont("helvetica", "bold");
+    doc.text(formatPrice(data.price), pageRight - 6, rowY, { align: "right" });
+    rowY += totalsLh;
+
+    doc.setFont("helvetica", "normal");
+    doc.text("SHIPPING & HANDLING", boxLeft - 8, rowY, { align: "right" });
+    doc.setFont("helvetica", "bold");
+    doc.text(formatPrice(data.shipping || "0"), pageRight - 6, rowY, { align: "right" });
+    rowY += totalsLh;
+
+    doc.line(boxLeft, rowY - totalsLh * 0.72, pageRight, rowY - totalsLh * 0.72);
+    doc.setFont("helvetica", "normal");
+    doc.text("TOTAL DUE", boxLeft - 8, rowY, { align: "right" });
+    doc.setFont("helvetica", "bold");
+    doc.text(formatPrice(String(totalDue)), pageRight - 6, rowY, { align: "right" });
+    doc.line(boxLeft, boxBottom, pageRight, boxBottom);
+
+    // Comments — the standard terms, plus this order's Notes as a third item
+    // when there's something order-specific to flag.
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "bold");
+    doc.text("Comments and special instructions", 40, 502.4);
+    doc.setFont("helvetica", "normal");
+    var comments = ["Total payment due on delivery", "Please include the invoice number on your check."];
+    if (data.notes) comments.push(data.notes);
+    var cy = 520.6;
+    comments.forEach(function (c, i) {
+      var wrapped = doc.splitTextToSize((i + 1) + ". " + c, pageRight - 40);
+      doc.text(wrapped, 40, cy);
+      cy += 13.2 * wrapped.length;
+    });
+
+    doc.setFontSize(10);
+    doc.text("If you have any questions concerning this invoice, please contact SATORU, Inc. at info@satoru.us or 845.616.8631", 40, 573.4);
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text("Thank you for your business!", 306, 606.6, { align: "center" });
+
+    var initials = storeInitials(data.store);
+    var filename = "I#" + (data.orderNo || "invoice") + (initials ? " " + initials : "") + ".pdf";
+    doc.save(filename);
+    return true;
+  }
+
+  function init() {
+    setFormData(EXAMPLE);
+    recomputeDerivedDiameters();
+    refreshFromForm();
+    renderRecentList();
+
+    FIELD_IDS.forEach(function (id) {
+      $(id).addEventListener("input", function () {
+        $("exampleBadge").style.display = "none";
+        refreshFromForm();
+      });
+    });
+
+    $("sizeSystem").addEventListener("change", function () {
+      $("exampleBadge").style.display = "none";
+      updateSizeSystemUI(this.value);
+      recomputeSize();
+    });
+    $("sizeValueSelect").addEventListener("change", function () {
+      $("exampleBadge").style.display = "none";
+      recomputeSize();
+    });
+    $("sizeValueCustom").addEventListener("input", function () {
+      $("exampleBadge").style.display = "none";
+      recomputeSize();
+    });
+    $("iid").addEventListener("input", function () {
+      recomputeDerivedDiameters();
+    });
+    $("heightMm").addEventListener("input", function () {
+      // For most styles height is a derived, read-only-in-spirit number; for the
+      // height-driven AC0x styles and the simple single-wall AB01 it's the
+      // manual input that drives OOD (and IOD/OID for AC0x).
+      var styleVal = $("style").value;
+      if (heightDrivenPrefix(styleVal) || simpleBandConfig(styleVal)) recomputeDerivedDiameters();
+    });
+    ["widthMm"].forEach(function (id) {
+      $(id).addEventListener("input", function () { recomputePrice(); });
+    });
+
+    function wireComboField(opts) {
+      var select = $(opts.selectId), hidden = $(opts.hiddenId), addRow = $(opts.addRowId),
+        addInput = $(opts.addInputId), addConfirm = $(opts.addConfirmId);
+
+      select.addEventListener("change", function () {
+        if (this.value === "__add__") {
+          addRow.hidden = false;
+          addInput.value = "";
+          addInput.focus();
+          return;
+        }
+        addRow.hidden = true;
+        hidden.value = this.value;
+        $("exampleBadge").style.display = "none";
+        opts.onSet();
+      });
+
+      function confirmAdd() {
+        var val = addInput.value.trim();
+        if (!val) return;
+        rememberOption(opts.storageKey, opts.builtins, val);
+        populateComboSelect(select, opts.storageKey, opts.builtins, val);
+        hidden.value = val;
+        addRow.hidden = true;
+        $("exampleBadge").style.display = "none";
+        opts.onSet();
+      }
+      addConfirm.addEventListener("click", confirmAdd);
+      addInput.addEventListener("keydown", function (e) {
+        if (e.key === "Enter") { e.preventDefault(); confirmAdd(); }
+      });
+    }
+
+    wireComboField({
+      selectId: "metalSelect", hiddenId: "metal", addRowId: "metalAddRow",
+      addInputId: "metalAddInput", addConfirmId: "metalAddConfirm",
+      storageKey: METAL_CUSTOM_KEY, builtins: METAL_BUILTINS,
+      onSet: function () { refreshFromForm(); recomputePrice(); }
+    });
+    wireComboField({
+      selectId: "styleSelect", hiddenId: "style", addRowId: "styleAddRow",
+      addInputId: "styleAddInput", addConfirmId: "styleAddConfirm",
+      storageKey: STYLE_CUSTOM_KEY, builtins: STYLE_BUILTINS,
+      onSet: function () {
+        // The Style field just changed interactively, so any leftover
+        // Height value belongs to whatever style was selected before —
+        // force AB01's height back to its 1.8mm standard rather than
+        // carrying over a stray number. (forceDefault=true)
+        updateHeightPickerUI(true);
+        // Same idea for AE01 and AB01/E, which additionally force Width —
+        // their spec is fixed, not carried over from whatever was selected
+        // before.
+        applyFixedBandDefaultsUI(true);
+        // Swap Width to the 4–10mm pulldown for LB00-family styles (plain
+        // number entry otherwise) before the diameter/price recompute below
+        // reads it.
+        updateWidthPickerUI();
+        recomputeDerivedDiameters();
+        updateCenterRangeUI();
+      }
+    });
+
+    $("centerRangeSelect").addEventListener("change", function () {
+      var group = acStyleGroup($("style").value);
+      if (!group) return;
+      var table = AC_CENTER_PRICE_TABLE[group];
+      var val = this.value;
+      var bracket = table.brackets.filter(function (b) { return b.key === val; })[0];
+      $("center").value = bracket ? bracket.label : "";
+      $("exampleBadge").style.display = "none";
+      refreshFromForm();
+      recomputePrice();
+    });
+    $("center").addEventListener("input", function () { recomputePrice(); });
+
+    $("heightSelect").addEventListener("change", function () {
+      $("heightMm").value = this.value;
+      $("exampleBadge").style.display = "none";
+      recomputeDerivedDiameters();
+    });
+
+    $("widthSelect").addEventListener("change", function () {
+      $("widthMm").value = this.value;
+      $("exampleBadge").style.display = "none";
+      recomputePrice();
+    });
+
+    $("downloadBtn").addEventListener("click", function () {
+      var data = getFormData();
+      if (!data.orderNo && !data.store) {
+        $("statusNote").textContent = "Add at least an order number or store before downloading.";
+        return;
+      }
+      generatePDF(data);
+      if (data.orderNo && /^\d+$/.test(data.orderNo)) {
+        localStorage.setItem(LAST_NO_KEY, data.orderNo);
+      }
+      addToRecent(data);
+      $("statusNote").textContent = "Downloaded and saved to Recent orders.";
+    });
+
+    $("printBtn").addEventListener("click", function () {
+      window.print();
+    });
+
+    // Bill-to address/phone are per-store, not per-order — offer back
+    // whatever was saved for this store name the last time, but never
+    // clobber something already typed into this order.
+    $("store").addEventListener("blur", function () {
+      if ($("storeAddress").value.trim() || $("storePhone").value.trim()) return;
+      var found = lookupStoreAddress(this.value);
+      if (!found) return;
+      $("storeAddress").value = found.address || "";
+      $("storePhone").value = found.phone || "";
+      $("exampleBadge").style.display = "none";
+      refreshFromForm();
+    });
+
+    $("invoiceBtn").addEventListener("click", function () {
+      var data = getFormData();
+      if (!data.orderNo && !data.store) {
+        $("statusNote").textContent = "Add at least an order number or store before generating an invoice.";
+        return;
+      }
+      if (!data.price || data.price === "?") {
+        $("statusNote").textContent = "Price isn't set yet — enter it before generating an invoice.";
+        return;
+      }
+      if (!data.invoiceDate) {
+        data.invoiceDate = new Date().toISOString().slice(0, 10);
+        $("invoiceDate").value = data.invoiceDate;
+      }
+      if (!generateInvoicePDF(data)) return;
+      if (data.orderNo && /^\d+$/.test(data.orderNo)) {
+        localStorage.setItem(LAST_NO_KEY, data.orderNo);
+      }
+      rememberStoreAddress(data.store, data.storeAddress, data.storePhone);
+      addToRecent(data);
+      $("statusNote").textContent = "Invoice downloaded and saved to Recent orders.";
+    });
+
+    $("clearBtn").addEventListener("click", function () {
+      var blank = {};
+      FIELD_IDS.forEach(function (id) { blank[id] = ""; });
+      blank.orderNo = suggestNextOrderNo();
+      var today = new Date();
+      blank.orderDate = today.toISOString().slice(0, 10);
+      setFormData(blank);
+      refreshFromForm();
+      $("exampleBadge").style.display = "none";
+      $("statusNote").textContent = "Blank order ready.";
+      $("orderNo").focus();
+    });
+  }
+
+  init();
+})();
+</script>
+</body></html>
