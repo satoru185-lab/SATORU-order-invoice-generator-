@@ -606,6 +606,11 @@
             <input id="shipping" data-mono type="text" inputmode="numeric" placeholder="33">
           </div>
         </div>
+        <div>
+          <label for="invoiceComments">Comments &amp; special instructions <span style="text-transform:none;font-weight:400;">(one per line — edit freely before generating)</span></label>
+          <textarea id="invoiceComments" placeholder="Total payment due on delivery&#10;Please include the invoice number on your check."></textarea>
+          <div class="field-note">Starts filled in with the usual terms (plus your Notes above, if any) — change or delete any line before you generate the PDF.</div>
+        </div>
       </fieldset>
 
       <div class="actions">
@@ -645,7 +650,7 @@
 
   var FIELD_IDS = ["orderNo","store","customer","orderDate","dueDate","style","metal",
     "widthMm","heightMm","center","sign","size","iid","iod","oid","ood","price","notes",
-    "stoneDetail","storeAddress","storePhone","shipTo","invoiceDate","shipping"];
+    "stoneDetail","storeAddress","storePhone","shipTo","invoiceDate","shipping","invoiceComments"];
 
   var STORAGE_KEY = "orderBench.recentOrders.v1";
   var LAST_NO_KEY = "orderBench.lastOrderNo";
@@ -804,10 +809,12 @@
     return data;
   }
 
-  // Tracks the last auto-filled Stone detail text so a further Sign edit can
-  // safely refresh it, without ever clobbering text the user typed in by
-  // hand. Reset whenever a form loads a different order's data (see below).
+  // Tracks the last auto-filled Stone detail / Comments text so a further
+  // Sign/Notes edit can safely refresh it, without ever clobbering text the
+  // user typed in by hand. Reset whenever a form loads a different order's
+  // data (see below).
   var lastAutoStoneDetail = "";
+  var lastAutoComments = "";
 
   function setFormData(data) {
     FIELD_IDS.forEach(function (id) { $(id).value = data[id] || ""; });
@@ -818,7 +825,18 @@
     updateCenterRangeUI();
     updateHeightPickerUI();
     updateWidthPickerUI();
+    // Orders saved before Comments existed have nothing here — give them
+    // the same starting template a brand-new order gets, instead of a
+    // blank box. Either way, only treat the field as "still on the
+    // auto-generated default" (and so safe to keep syncing from Notes) when
+    // it actually matches that default — a loaded order with genuinely
+    // customized comments must never get silently overwritten later.
+    var defaultComments = computeDefaultComments(data.notes);
+    if (!$("invoiceComments").value.trim()) {
+      $("invoiceComments").value = defaultComments;
+    }
     lastAutoStoneDetail = "";
+    lastAutoComments = ($("invoiceComments").value === defaultComments) ? defaultComments : "";
   }
 
   // Ring Sizer Chart — Japan size / mm and USA size / mm, from the shop's own chart.
@@ -1960,6 +1978,17 @@
     return lines.join("\n");
   }
 
+  // Invoice Comments starts pre-filled with these two standard terms (plus
+  // the order's Notes, if any, as a third line) — a ready-to-go starting
+  // template rather than a blank box, but every line of it is a normal
+  // textarea the user can edit or delete before generating the PDF.
+  var DEFAULT_COMMENTS_BASE = ["Total payment due on delivery", "Please include the invoice number on your check."];
+  function computeDefaultComments(notes) {
+    var lines = DEFAULT_COMMENTS_BASE.slice();
+    if (notes) lines.push(notes);
+    return lines.join("\n");
+  }
+
   // Same fixed letter-page invoice every time — logo, "From" business block,
   // table borders and totals box, and the boilerplate comments/footer text
   // are all positioned from the coordinates of the shop's own invoice
@@ -2095,14 +2124,16 @@
     doc.text(formatPrice(String(totalDue)), pageRight - 6, rowY, { align: "right" });
     doc.line(boxLeft, boxBottom, pageRight, boxBottom);
 
-    // Comments — the standard terms, plus this order's Notes as a third item
-    // when there's something order-specific to flag.
+    // Comments — whatever's in the Comments & special instructions field,
+    // one line per bullet. Starts pre-filled with the standard terms (plus
+    // Notes, if any) but is fully editable before you generate, so this
+    // reads back exactly what's on screen rather than fixed boilerplate.
     doc.setFontSize(10);
     doc.setFont("helvetica", "bold");
     doc.text("Comments and special instructions", 40, 502.4);
     doc.setFont("helvetica", "normal");
-    var comments = ["Total payment due on delivery", "Please include the invoice number on your check."];
-    if (data.notes) comments.push(data.notes);
+    var comments = textLines(data.invoiceComments);
+    if (!comments.length) comments = DEFAULT_COMMENTS_BASE.slice();
     var cy = 520.6;
     comments.forEach(function (c, i) {
       var wrapped = doc.splitTextToSize((i + 1) + ". " + c, pageRight - 40);
@@ -2131,6 +2162,7 @@
     FIELD_IDS.forEach(function (id) { blank[id] = ""; });
     blank.orderNo = suggestNextOrderNo();
     blank.orderDate = new Date().toISOString().slice(0, 10);
+    blank.invoiceComments = computeDefaultComments("");
     return blank;
   }
 
@@ -2170,6 +2202,19 @@
         $("stoneDetail").value = def;
         lastAutoStoneDetail = def;
         refreshFromForm();
+      }
+    });
+
+    // Keeps Invoice Comments' auto-added Notes line in sync while Notes is
+    // being typed — same non-destructive rule as Stone detail above: only
+    // touches Comments while it still matches what was last auto-filled, so
+    // editing (or deleting) a comment by hand always sticks.
+    $("notes").addEventListener("input", function () {
+      var def = computeDefaultComments(this.value);
+      var current = $("invoiceComments").value;
+      if (!current.trim() || current === lastAutoComments) {
+        $("invoiceComments").value = def;
+        lastAutoComments = def;
       }
     });
 
