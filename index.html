@@ -53,6 +53,13 @@
 
   * { box-sizing: border-box; }
 
+  /* Several elements toggle visibility via the `hidden` attribute/property
+     from JS, but also have their own `display` set by a class (flex layouts,
+     mostly) — an author `display` rule of equal specificity beats the
+     browser's built-in `[hidden]{display:none}` default, so without this
+     override those elements would stay visible even while "hidden". */
+  [hidden] { display: none !important; }
+
   body {
     background: var(--bg);
     color: var(--ink);
@@ -104,6 +111,50 @@
     white-space: nowrap;
   }
   .recent-jump:hover { color: var(--ink); border-color: var(--ink-faint); }
+
+  /* Landing chooser — shown fresh every time the app opens, before any order
+     or invoice data exists, so the two things you'd actually come here to do
+     are the first thing you see instead of a blank form. */
+  .chooser {
+    display: flex;
+    gap: 20px;
+    max-width: 640px;
+    margin: 48px auto;
+    padding: 0 24px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .chooser-card {
+    flex: 1 1 220px;
+    max-width: 280px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 32px 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 4px;
+    cursor: pointer;
+    font: inherit;
+    color: inherit;
+    box-shadow: var(--shadow);
+    transition: transform 0.12s ease, border-color 0.12s ease;
+  }
+  .chooser-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .chooser-card:active { transform: translateY(0); }
+
+  .chooser-icon { width: 48px; height: 48px; color: var(--accent-strong); margin-bottom: 10px; }
+
+  .chooser-label {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    font-size: 17px;
+    color: var(--ink);
+  }
+  .chooser-sub { font-size: 12.5px; color: var(--ink-soft); margin-top: 2px; }
 
   .layout {
     display: grid;
@@ -333,7 +384,7 @@
   @media print {
     @page { size: letter; margin: 0; }
     html, body { margin: 0; padding: 0; background: #fff; }
-    header.top, #orderForm, .recent { display: none !important; }
+    header.top, #chooser, #orderForm, .recent { display: none !important; }
     .wrap { max-width: none; margin: 0; padding: 0; }
     .layout { display: block; gap: 0; }
     .preview-col { position: static; display: block; gap: 0; }
@@ -354,9 +405,36 @@
       <div class="wordmark">SATORU<span class="dot">.</span></div>
       <div class="tagline">Order Bench — build a ring order docket and download it as a PDF.</div>
     </div>
+    <a class="recent-jump" href="#" id="modeBackLink" hidden>&larr; Order/Invoice</a>
     <a class="recent-jump" href="#recent" id="recentJumpLink">Recent orders</a>
   </header>
 
+  <div class="chooser" id="chooser">
+    <button type="button" class="chooser-card" id="chooseOrder">
+      <svg class="chooser-icon" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+        <rect x="9" y="7" width="30" height="38" rx="4" stroke="currentColor" stroke-width="2.25"/>
+        <rect x="17" y="3" width="14" height="8" rx="3" stroke="currentColor" stroke-width="2.25" fill="var(--surface)"/>
+        <line x1="15" y1="21" x2="33" y2="21" stroke="currentColor" stroke-width="2.25" stroke-linecap="round"/>
+        <line x1="15" y1="28" x2="29" y2="28" stroke="currentColor" stroke-width="2.25" stroke-linecap="round"/>
+        <line x1="15" y1="35" x2="25" y2="35" stroke="currentColor" stroke-width="2.25" stroke-linecap="round"/>
+      </svg>
+      <div class="chooser-label">Order Form</div>
+      <div class="chooser-sub">Start a new ring order docket</div>
+    </button>
+    <button type="button" class="chooser-card" id="chooseInvoice">
+      <svg class="chooser-icon" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+        <path d="M11 4H37V40L33 44L29 40L25 44L21 40L17 44L13 40L11 44V4Z" stroke="currentColor" stroke-width="2.25" stroke-linejoin="round"/>
+        <line x1="16" y1="14" x2="32" y2="14" stroke="currentColor" stroke-width="2.25" stroke-linecap="round"/>
+        <line x1="16" y1="21" x2="28" y2="21" stroke="currentColor" stroke-width="2.25" stroke-linecap="round"/>
+        <path d="M22 27.5C22 26.12 23.34 25 25 25C26.66 25 28 26.12 28 27.5C28 28.88 26.66 30 25 30C23.34 30 22 31.12 22 32.5C22 33.88 23.34 35 25 35C26.66 35 28 33.88 28 32.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <line x1="25" y1="23.5" x2="25" y2="36.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <div class="chooser-label">Invoice</div>
+      <div class="chooser-sub">Bill a store or a direct customer</div>
+    </button>
+  </div>
+
+  <div class="app-body" id="appBody" hidden>
   <div class="layout">
     <form class="panel" id="orderForm" onsubmit="return false;">
       <fieldset>
@@ -367,8 +445,13 @@
             <input id="orderNo" data-mono>
           </div>
           <div>
-            <label for="store">Store</label>
-            <input id="store" placeholder="Leave blank for a direct customer order">
+            <label for="storeSelect">Store</label>
+            <select id="storeSelect"></select>
+            <div class="add-new-row" id="storeAddRow" hidden>
+              <input id="storeAddInput" placeholder="e.g. New Store">
+              <button type="button" class="btn-ghost" id="storeAddConfirm">Add</button>
+            </div>
+            <input type="hidden" id="store">
           </div>
         </div>
         <div>
@@ -550,6 +633,7 @@
     <p class="sub">Saved on this device only — the downloaded PDF is your real record. Click a card to reopen it.</p>
     <div class="recent-list" id="recentList"></div>
   </div>
+  </div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -580,6 +664,15 @@
   ];
   var METAL_CUSTOM_KEY = "orderBench.customMetals";
   var STYLE_CUSTOM_KEY = "orderBench.customStyles";
+
+  // Store dropdown: your regular wholesale accounts, plus "Direct order" for
+  // a customer who isn't buying through a store — picking it clears the
+  // store value entirely (same as historically leaving Store blank), which
+  // is what flips pricing to retail (see isDirectOrder) and prints just the
+  // customer's name on the docket/invoice instead of a store line.
+  var STORE_BUILTINS = ["I. Gorman", "Turgeon Raine", "Earthworks Gallery"];
+  var STORE_CUSTOM_KEY = "orderBench.customStores";
+  var STORE_DIRECT_VALUE = "__direct__";
 
   function loadCustomList(key) {
     try { return JSON.parse(localStorage.getItem(key) || "[]"); } catch (e) { return []; }
@@ -634,6 +727,18 @@
     saveAddressBook(book);
   }
 
+  // Bill-to address/phone are per-store, not per-order — offer back whatever
+  // was saved for this store name the last time it was picked, but never
+  // clobber something already typed into this order.
+  function autofillStoreAddress(storeRaw) {
+    if ($("storeAddress").value.trim() || $("storePhone").value.trim()) return;
+    var found = lookupStoreAddress(storeRaw);
+    if (!found) return;
+    $("storeAddress").value = found.address || "";
+    $("storePhone").value = found.phone || "";
+    refreshFromForm();
+  }
+
   function escapeHtml(s) {
     return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
   }
@@ -664,6 +769,33 @@
     $("styleAddRow").hidden = true;
   }
 
+  // Store's dropdown is like Style/Metal's (a builtin list plus anything
+  // added with "+ Add new…") but with one extra fixed entry, "Direct order",
+  // which doesn't get remembered as a store name — selecting it just clears
+  // the underlying store value, same as always having left Store blank.
+  function populateStoreSelect(selectEl, selectedValue, directSelected) {
+    var options = comboOptionsList(STORE_CUSTOM_KEY, STORE_BUILTINS);
+    if (selectedValue && !directSelected && !options.some(function (v) { return sameOption(v, selectedValue); })) {
+      options = options.concat([selectedValue]);
+    }
+    var html = '<option value="">Select…</option>';
+    html += '<option value="' + STORE_DIRECT_VALUE + '">Direct order (no store)</option>';
+    html += options.map(function (v) {
+      var esc = escapeHtml(v);
+      return '<option value="' + esc + '">' + esc + "</option>";
+    }).join("");
+    html += '<option value="__add__">+ Add new…</option>';
+    selectEl.innerHTML = html;
+    selectEl.value = directSelected ? STORE_DIRECT_VALUE : (selectedValue || "");
+  }
+
+  function syncStorePickerFromValue(storeValue, customerValue) {
+    var direct = !storeValue && !!(customerValue && customerValue.trim());
+    populateStoreSelect($("storeSelect"), storeValue || "", direct);
+    $("store").value = storeValue || "";
+    $("storeAddRow").hidden = true;
+  }
+
   function $(id) { return document.getElementById(id); }
 
   function getFormData() {
@@ -677,6 +809,7 @@
     syncSizePickerFromValue(data.size || "");
     syncMetalPickerFromValue(data.metal || "");
     syncStylePickerFromValue(data.style || "");
+    syncStorePickerFromValue(data.store || "", data.customer || "");
     updateCenterRangeUI();
     updateHeightPickerUI();
     updateWidthPickerUI();
@@ -1597,6 +1730,9 @@
     if (isDirectOrder()) {
       el.textContent = "Direct order — no store on file, so pricing quotes at retail.";
       el.className = "field-note is-auto";
+    } else if ($("storeSelect").value === STORE_DIRECT_VALUE && !$("customer").value.trim()) {
+      el.textContent = "Direct order selected — enter the customer's name below.";
+      el.className = "field-note is-auto";
     } else {
       el.textContent = "";
       el.className = "field-note";
@@ -1639,7 +1775,7 @@
       return '<div class="recent-card" data-idx="' + i + '">' +
         '<button class="del" data-idx="' + i + '" title="Remove">×</button>' +
         '<div class="no">' + (item.orderNo || "—") + "</div>" +
-        '<div class="store">' + (item.store || "No store") + "</div>" +
+        '<div class="store">' + (item.store || item.customer || "No store") + "</div>" +
         '<div class="meta">' + (item.metal || "") + (item.metal && item.size ? " · " : "") + (item.size || "") + "</div>" +
         "</div>";
     }).join("");
@@ -1956,11 +2092,51 @@
 
     // Store/Customer decide wholesale vs. retail (see isDirectOrder), so
     // typing in either one needs to re-run the price lookup live, not just
-    // refresh the docket preview.
-    ["store", "customer"].forEach(function (id) {
+    // refresh the docket preview. Store itself is now driven by storeSelect
+    // (below), which calls recomputePrice() directly since setting a hidden
+    // input's .value in JS doesn't fire an "input" event.
+    ["customer"].forEach(function (id) {
       $(id).addEventListener("input", function () {
         recomputePrice();
+        updateOrderModeUI();
       });
+    });
+
+    $("storeSelect").addEventListener("change", function () {
+      if (this.value === "__add__") {
+        $("storeAddRow").hidden = false;
+        $("storeAddInput").value = "";
+        $("storeAddInput").focus();
+        return;
+      }
+      $("storeAddRow").hidden = true;
+      if (this.value === STORE_DIRECT_VALUE) {
+        $("store").value = "";
+        if (!$("customer").value.trim()) $("customer").focus();
+      } else {
+        $("store").value = this.value;
+        autofillStoreAddress(this.value);
+      }
+      refreshFromForm();
+      recomputePrice();
+      updateOrderModeUI();
+    });
+
+    function confirmStoreAdd() {
+      var val = $("storeAddInput").value.trim();
+      if (!val) return;
+      rememberOption(STORE_CUSTOM_KEY, STORE_BUILTINS, val);
+      populateStoreSelect($("storeSelect"), val, false);
+      $("store").value = val;
+      $("storeAddRow").hidden = true;
+      autofillStoreAddress(val);
+      refreshFromForm();
+      recomputePrice();
+      updateOrderModeUI();
+    }
+    $("storeAddConfirm").addEventListener("click", confirmStoreAdd);
+    $("storeAddInput").addEventListener("keydown", function (e) {
+      if (e.key === "Enter") { e.preventDefault(); confirmStoreAdd(); }
     });
 
     $("sizeSystem").addEventListener("change", function () {
@@ -2087,17 +2263,6 @@
       window.print();
     });
 
-    // Bill-to address/phone are per-store, not per-order — offer back
-    // whatever was saved for this store name the last time, but never
-    // clobber something already typed into this order.
-    $("store").addEventListener("blur", function () {
-      if ($("storeAddress").value.trim() || $("storePhone").value.trim()) return;
-      var found = lookupStoreAddress(this.value);
-      if (!found) return;
-      $("storeAddress").value = found.address || "";
-      $("storePhone").value = found.phone || "";
-      refreshFromForm();
-    });
 
     $("invoiceBtn").addEventListener("click", function () {
       var data = getFormData();
@@ -2127,6 +2292,45 @@
       refreshFromForm();
       $("statusNote").textContent = "Blank order ready.";
       $("orderNo").focus();
+    });
+
+    // Landing chooser: opening the app shows two starting points — Order
+    // Form and Invoice — instead of a blank form. Picking either just
+    // reveals the same form (an invoice is built from the same order
+    // details), styled so the button matching what you came here to do is
+    // the obvious one to press.
+    function enterMode(mode) {
+      $("chooser").hidden = true;
+      $("appBody").hidden = false;
+      $("modeBackLink").hidden = false;
+      if (mode === "invoice") {
+        $("downloadBtn").className = "btn-ghost";
+        $("invoiceBtn").className = "btn-primary";
+      } else {
+        $("invoiceBtn").className = "btn-ghost";
+        $("downloadBtn").className = "btn-primary";
+      }
+      $("orderNo").focus();
+    }
+
+    $("chooseOrder").addEventListener("click", function () { enterMode("order"); });
+    $("chooseInvoice").addEventListener("click", function () { enterMode("invoice"); });
+
+    $("modeBackLink").addEventListener("click", function (e) {
+      e.preventDefault();
+      $("appBody").hidden = true;
+      $("chooser").hidden = false;
+      $("modeBackLink").hidden = true;
+    });
+
+    // Recent orders lives inside the form/preview area, so jumping to it
+    // from the chooser screen needs to open a mode first.
+    $("recentJumpLink").addEventListener("click", function (e) {
+      if ($("appBody").hidden) {
+        e.preventDefault();
+        enterMode("order");
+        $("recent").scrollIntoView({ behavior: "smooth", block: "start" });
+      }
     });
   }
 
