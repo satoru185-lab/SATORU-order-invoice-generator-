@@ -804,6 +804,11 @@
     return data;
   }
 
+  // Tracks the last auto-filled Stone detail text so a further Sign edit can
+  // safely refresh it, without ever clobbering text the user typed in by
+  // hand. Reset whenever a form loads a different order's data (see below).
+  var lastAutoStoneDetail = "";
+
   function setFormData(data) {
     FIELD_IDS.forEach(function (id) { $(id).value = data[id] || ""; });
     syncSizePickerFromValue(data.size || "");
@@ -813,6 +818,7 @@
     updateCenterRangeUI();
     updateHeightPickerUI();
     updateWidthPickerUI();
+    lastAutoStoneDetail = "";
   }
 
   // Ring Sizer Chart — Japan size / mm and USA size / mm, from the shop's own chart.
@@ -1708,8 +1714,7 @@
     html += line("Order date", formatDateDisplay(data.orderDate));
     html += line("Due Date", formatDateDisplay(data.dueDate), true);
     html += line("Style", data.style);
-    html += line("Metal", data.metal);
-    html += line("Size", data.size);
+    html += splitLine({ label: "Metal", value: data.metal }, { label: "Size", value: data.size });
     html += line("Center", data.center);
     html += line("Sign", data.sign);
     html += splitLine({ label: "Width", value: formatMm(data.widthMm) }, { label: "Height", value: formatMm(data.heightMm) });
@@ -1855,6 +1860,19 @@
       y += lh;
     }
 
+    // Like printSplit, but the second field starts right after however wide
+    // the first one actually renders, rather than a fixed column stop — used
+    // for Metal/Size since metal names ("18K Yellow", "Sterling Silver", a
+    // custom entry, ...) vary too much in length for a fixed tab stop to
+    // reliably clear without the two fields colliding.
+    function printSplitAuto(a, b, gap) {
+      doc.setFont("helvetica", "normal");
+      var aText = a.label + ": " + (a.value || "");
+      doc.text(aText, fieldX, y);
+      doc.text(b.label + ": " + (b.value || ""), fieldX + doc.getTextWidth(aText) + (gap || 24), y);
+      y += lh;
+    }
+
     // Note sits right below Price, always printed (even blank) so there's a
     // consistent spot for a handwritten note on the printed slip — matches
     // the original paper docket. Long notes wrap across multiple lines at
@@ -1872,8 +1890,7 @@
     printLine("Order date", formatDateDisplay(data.orderDate));
     printLine("Due Date", formatDateDisplay(data.dueDate), true);
     printLine("Style", data.style);
-    printLine("Metal", data.metal);
-    printLine("Size", data.size);
+    printSplitAuto({ label: "Metal", value: data.metal }, { label: "Size", value: data.size });
     printLine("Center", data.center);
     printLine("Sign", data.sign);
     printSplit({ label: "Width", value: formatMm(data.widthMm) }, { label: "Height", value: formatMm(data.heightMm) });
@@ -1928,6 +1945,19 @@
     var lines = textLines(data.stoneDetail);
     if (!lines.length && data.sign) lines = [data.sign];
     return lines;
+  }
+
+  // Diamond and ruby are always the same standard spec on these orders, so
+  // typing either one (or "Dia/Ruby") into Sign auto-fills the matching
+  // line(s) into Stone detail instead of retyping the same text every time.
+  // Any other stone (sapphire, etc.) has no fixed default and is left alone.
+  var DEFAULT_STONE_LINE = { dia: "0.01ct DEF/VVS Diamond", ruby: "0.01ct Top Red Ruby" };
+  function computeDefaultStoneDetail(signRaw) {
+    var s = (signRaw || "").toLowerCase();
+    var lines = [];
+    if (s.indexOf("dia") !== -1) lines.push(DEFAULT_STONE_LINE.dia);
+    if (s.indexOf("ruby") !== -1) lines.push(DEFAULT_STONE_LINE.ruby);
+    return lines.join("\n");
   }
 
   // Same fixed letter-page invoice every time — logo, "From" business block,
@@ -2126,6 +2156,21 @@
         recomputePrice();
         updateOrderModeUI();
       });
+    });
+
+    // Auto-fills Stone detail from Sign (see computeDefaultStoneDetail) —
+    // only when Stone detail is still blank or still holds what was last
+    // auto-filled, so it stays in sync while Sign is being typed but never
+    // overwrites a manual edit.
+    $("sign").addEventListener("input", function () {
+      var def = computeDefaultStoneDetail(this.value);
+      if (!def) return;
+      var current = $("stoneDetail").value;
+      if (!current.trim() || current === lastAutoStoneDetail) {
+        $("stoneDetail").value = def;
+        lastAutoStoneDetail = def;
+        refreshFromForm();
+      }
     });
 
     $("storeSelect").addEventListener("change", function () {
