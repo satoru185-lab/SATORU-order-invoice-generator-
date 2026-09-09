@@ -2268,6 +2268,10 @@
     // Shipping & handling / Total due. No surrounding box (matches the
     // on-screen preview) — just the rule above TOTAL DUE below.
     var boxLeft = colX[5], boxBottom = 486.2;
+    // Left edge of the totals block itself (labels + values), matching the
+    // on-screen preview's ~48%-width totals column — the rule above TOTAL
+    // DUE spans this full width, not just the narrower TOTAL number column.
+    var totalsLeft = 323.3;
     var totalsLh = 20.3;
     var rowY = 430.7;
     var priceNum = parseFloat(data.price);
@@ -2288,7 +2292,7 @@
     doc.text(formatPrice(data.shipping || "0"), pageRight - 6, rowY, { align: "right" });
     rowY += totalsLh;
 
-    doc.line(boxLeft, rowY - totalsLh * 0.72, pageRight, rowY - totalsLh * 0.72);
+    doc.line(totalsLeft, rowY - totalsLh * 0.72, pageRight, rowY - totalsLh * 0.72);
     doc.setFont("helvetica", "normal");
     doc.text("TOTAL DUE", boxLeft - 8, rowY, { align: "right" });
     doc.setFont("helvetica", "bold");
