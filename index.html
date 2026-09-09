@@ -335,23 +335,29 @@
      table needs real layout, not point-for-point positioning. */
   .invoice-sheet {
     box-sizing: border-box;
-    padding: 5.5% 6.2%;
+    padding: 6% 6.2%;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 16px;
     font-size: 9px;
     line-height: 1.4;
     overflow: hidden;
   }
-  .inv-topline { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
-  .inv-logo { width: 46%; height: auto; display: block; }
-  .inv-heading { font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 19px; color: #8a8a8a; }
+  /* Logo sits centered at the top like the real letterhead — "Invoice" is
+     its own element pinned to the top-right corner, not paired with the
+     logo in a left/right split. */
+  .inv-topline { position: relative; display: flex; justify-content: center; padding: 2px 0 4px; }
+  .inv-logo { width: 40%; height: auto; display: block; }
+  .inv-heading {
+    position: absolute; top: 18%; right: 0;
+    font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 19px; color: #8a8a8a;
+  }
   .inv-row { display: flex; justify-content: space-between; gap: 12px; }
   .inv-from, .inv-to { max-width: 58%; }
   .inv-num, .inv-ship { text-align: right; }
   .inv-ship { text-align: left; }
   .inv-num-strong, .inv-to-name, .inv-lbl-strong { font-weight: 700; font-size: 10px; }
-  .inv-table { width: 100%; border-collapse: collapse; font-size: 8px; table-layout: fixed; }
+  .inv-table { width: 100%; border-collapse: collapse; font-size: 8px; table-layout: fixed; margin-top: 6px; }
   .inv-table th, .inv-table td {
     border: 0.75px solid var(--paper-ink);
     padding: 4px 3px;
@@ -367,8 +373,9 @@
   .inv-comments-title { font-weight: 700; margin-bottom: 3px; }
   #ivComments { margin: 0; padding-left: 14px; }
   #ivComments li { margin-bottom: 2px; }
-  .inv-footer { margin-top: auto; font-size: 8px; }
-  .inv-thanks { font-weight: 700; text-align: center; margin-top: 8px; font-size: 10px; }
+  .inv-footer { margin-top: auto; }
+  .inv-footer-contact { font-size: 6.6px; white-space: nowrap; }
+  .inv-thanks { font-weight: 700; text-align: center; margin-top: 10px; font-size: 10px; }
 
   .recent {
     margin-top: 36px;
@@ -660,6 +667,7 @@
         <button type="button" class="btn-ghost" id="printBtn">Print</button>
         <button type="button" class="btn-ghost" id="invoiceBtn">Generate Invoice</button>
         <button type="button" class="btn-primary" id="saveInvoiceBtn" hidden>Save PDF</button>
+        <button type="button" class="btn-ghost" id="printInvoiceBtn" hidden>Print</button>
         <button type="button" class="btn-ghost" id="clearBtn">New blank order</button>
       </div>
       <div class="field-note" id="statusNote"></div>
@@ -729,7 +737,7 @@
             <ol id="ivComments"></ol>
           </div>
           <div class="inv-footer">
-            <div>If you have any questions concerning this invoice, please contact SATORU, Inc. at info@satoru.us or 845.616.8631</div>
+            <div class="inv-footer-contact">If you have any questions concerning this invoice, please contact SATORU, Inc. at info@satoru.us or 845.616.8631</div>
             <div class="inv-thanks">Thank you for your business!</div>
           </div>
         </div>
@@ -2145,7 +2153,7 @@
   // table borders and totals box, and the boilerplate comments/footer text
   // are all positioned from the coordinates of the shop's own invoice
   // template, so this lines up the same way that template did.
-  function generateInvoicePDF(data) {
+  function buildInvoicePDF(data) {
     var jsPDFCtor = window.jspdf && window.jspdf.jsPDF;
     if (!jsPDFCtor) {
       $("statusNote").textContent = "PDF library did not load — check your connection and try again.";
@@ -2306,7 +2314,30 @@
 
     var initials = storeInitials(data.store || data.customer);
     var filename = "I#" + (data.orderNo || "invoice") + (initials ? " " + initials : "") + ".pdf";
-    doc.save(filename);
+    return { doc: doc, filename: filename };
+  }
+
+  function generateInvoicePDF(data) {
+    var built = buildInvoicePDF(data);
+    if (!built) return false;
+    built.doc.save(built.filename);
+    return true;
+  }
+
+  // Same reasoning as printDocketPDF: Safari/iOS's native window.print()
+  // doesn't reliably honor print CSS, but a pre-rendered PDF always prints
+  // at the right size — so Print opens the exact same PDF Save PDF makes,
+  // via the browser/share sheet's own Print action, instead of printing the
+  // page itself.
+  function printInvoicePDF(data) {
+    var built = buildInvoicePDF(data);
+    if (!built) return false;
+    built.doc.autoPrint();
+    var opened = window.open(built.doc.output("bloburl"), "_blank");
+    if (!opened) {
+      $("statusNote").textContent = "Your browser blocked the print preview — allow pop-ups for this page and try again.";
+      return false;
+    }
     return true;
   }
 
@@ -2552,27 +2583,48 @@
       enterMode("invoice");
     });
 
-    $("saveInvoiceBtn").addEventListener("click", function () {
+    // Shared by Save PDF and Print — the checks and the "remember this
+    // order" bookkeeping are identical either way, only what happens with
+    // the built PDF differs.
+    function readyInvoiceData() {
       var data = getFormData();
       if (!data.orderNo && !data.store) {
         $("statusNote").textContent = "Add at least an order number or store before generating an invoice.";
-        return;
+        return null;
       }
       if (!data.price || data.price === "?") {
         $("statusNote").textContent = "Price isn't set yet — enter it before generating an invoice.";
-        return;
+        return null;
       }
       if (!data.invoiceDate) {
         data.invoiceDate = new Date().toISOString().slice(0, 10);
         $("invoiceDate").value = data.invoiceDate;
       }
-      if (!generateInvoicePDF(data)) return;
+      return data;
+    }
+
+    function afterInvoiceGenerated(data) {
       if (data.orderNo && /^\d+$/.test(data.orderNo)) {
         localStorage.setItem(LAST_NO_KEY, data.orderNo);
       }
       rememberStoreAddress(data.store, data.storeAddress, data.storePhone);
       addToRecent(data);
+    }
+
+    $("saveInvoiceBtn").addEventListener("click", function () {
+      var data = readyInvoiceData();
+      if (!data) return;
+      if (!generateInvoicePDF(data)) return;
+      afterInvoiceGenerated(data);
       $("statusNote").textContent = "Invoice downloaded and saved to Recent orders.";
+    });
+
+    $("printInvoiceBtn").addEventListener("click", function () {
+      var data = readyInvoiceData();
+      if (!data) return;
+      if (!printInvoicePDF(data)) return;
+      afterInvoiceGenerated(data);
+      $("statusNote").textContent = "Opened as a PDF — use your browser/share sheet's Print option from there.";
     });
 
     $("clearBtn").addEventListener("click", function () {
@@ -2604,6 +2656,7 @@
       $("printBtn").hidden = mode === "invoice";
       $("invoiceBtn").hidden = mode === "invoice";
       $("saveInvoiceBtn").hidden = mode !== "invoice";
+      $("printInvoiceBtn").hidden = mode !== "invoice";
       $("orderNo").focus();
     }
 
