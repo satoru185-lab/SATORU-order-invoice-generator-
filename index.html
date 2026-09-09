@@ -356,6 +356,12 @@
   .inv-from, .inv-to { max-width: 58%; }
   .inv-num, .inv-ship { text-align: right; }
   .inv-ship { text-align: left; }
+  /* The To:/Ship To row doesn't flush Ship To against the right edge like
+     the letterhead's From:/Invoice# row does — on the real invoice, SHIP TO
+     sits at a fixed point roughly at the horizontal center of the page, so
+     this row uses a fixed 50/50 split instead of space-between. */
+  .inv-row-ship { display: grid; grid-template-columns: 1fr 1fr; }
+  .inv-row-ship .inv-to { max-width: none; }
   .inv-num-strong, .inv-to-name, .inv-lbl-strong { font-weight: 700; font-size: 10px; }
   .inv-table { width: 100%; border-collapse: collapse; font-size: 8px; table-layout: fixed; margin-top: 6px; }
   .inv-table th, .inv-table td {
@@ -698,7 +704,7 @@
               <div id="ivDate">DATE:</div>
             </div>
           </div>
-          <div class="inv-row">
+          <div class="inv-row inv-row-ship">
             <div class="inv-to">
               <div class="inv-to-name" id="ivTo">To:</div>
               <div id="ivToAddr"></div>
