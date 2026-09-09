@@ -2318,6 +2318,15 @@
     doc.setFont("helvetica", "bold");
     doc.text("Thank you for your business!", 306, 764.4, { align: "center" });
 
+    // Temporary build marker (bottom-left corner, tiny/light) — purely to
+    // diagnose whether a generated PDF is coming from this current code.
+    // Safe to remove once that's confirmed.
+    doc.setFontSize(6);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(200, 200, 200);
+    doc.text("build 2026-09-09-c", 10, 786);
+    doc.setTextColor.apply(doc, ink);
+
     var initials = storeInitials(data.store || data.customer);
     var filename = "I#" + (data.orderNo || "invoice") + (initials ? " " + initials : "") + ".pdf";
     return { doc: doc, filename: filename };
