@@ -659,6 +659,7 @@
         <button type="button" class="btn-primary" id="downloadBtn">Download PDF</button>
         <button type="button" class="btn-ghost" id="printBtn">Print</button>
         <button type="button" class="btn-ghost" id="invoiceBtn">Generate Invoice</button>
+        <button type="button" class="btn-primary" id="saveInvoiceBtn" hidden>Save PDF</button>
         <button type="button" class="btn-ghost" id="clearBtn">New blank order</button>
       </div>
       <div class="field-note" id="statusNote"></div>
@@ -2543,7 +2544,15 @@
     });
 
 
+    // "Generate Invoice" no longer builds a PDF on the spot — it just jumps
+    // you into Invoice mode so you can see the invoice preview and adjust
+    // Bill-to/Ship-to/Comments/etc. first. The actual PDF only gets made
+    // when you click Save PDF below, once it looks right.
     $("invoiceBtn").addEventListener("click", function () {
+      enterMode("invoice");
+    });
+
+    $("saveInvoiceBtn").addEventListener("click", function () {
       var data = getFormData();
       if (!data.orderNo && !data.store) {
         $("statusNote").textContent = "Add at least an order number or store before generating an invoice.";
@@ -2588,13 +2597,13 @@
       refreshFromForm();
       $("sheet").hidden = mode === "invoice";
       $("invoiceSheet").hidden = mode !== "invoice";
-      if (mode === "invoice") {
-        $("downloadBtn").className = "btn-ghost";
-        $("invoiceBtn").className = "btn-primary";
-      } else {
-        $("invoiceBtn").className = "btn-ghost";
-        $("downloadBtn").className = "btn-primary";
-      }
+      // Order mode's actions (Download/Print the docket, jump to Invoice) vs.
+      // Invoice mode's one action (Save PDF, once the preview looks right) —
+      // each mode only shows the buttons that apply to what's on screen.
+      $("downloadBtn").hidden = mode === "invoice";
+      $("printBtn").hidden = mode === "invoice";
+      $("invoiceBtn").hidden = mode === "invoice";
+      $("saveInvoiceBtn").hidden = mode !== "invoice";
       $("orderNo").focus();
     }
 
