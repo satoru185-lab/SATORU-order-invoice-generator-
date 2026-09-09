@@ -2232,6 +2232,9 @@
     // size) is what actually looks centered, for both the single-line
     // cells and the 2-line Stones/Note blocks below.
     var rowMidY = (tableHeaderRule + tableBottom) / 2 + 4;
+    // Same centering treatment for the header row itself — it was pinned to
+    // a fixed y that sat close to the row's top border with a big gap below.
+    var headerMidY = (tableTop + tableHeaderRule) / 2 + 4;
 
     doc.setDrawColor(0, 0, 0);
     doc.setLineWidth(0.75);
@@ -2242,7 +2245,7 @@
     doc.setFontSize(10);
     doc.setFont("helvetica", "bold");
     ["Style", "Size", "Metal", "Stones", "Note", "TOTAL"].forEach(function (label, i) {
-      doc.text(label, colCenter[i], 346.2, { align: "center" });
+      doc.text(label, colCenter[i], headerMidY, { align: "center" });
     });
 
     doc.setFont("helvetica", "normal");
