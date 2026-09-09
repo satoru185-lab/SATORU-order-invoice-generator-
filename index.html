@@ -2267,13 +2267,17 @@
     // Totals — a continuation of the TOTAL column, down through Subtotal /
     // Shipping & handling / Total due. No surrounding box (matches the
     // on-screen preview) — just the rule above TOTAL DUE below.
-    var boxLeft = colX[5], boxBottom = 486.2;
     // Left edge of the totals block itself (labels + values), matching the
-    // on-screen preview's ~48%-width totals column — the rule above TOTAL
-    // DUE spans this full width, not just the narrower TOTAL number column.
+    // on-screen preview's ~48%-width totals column. Labels are left-aligned
+    // starting here (not right-aligned ending near the value column) so they
+    // line up flush with the rule above TOTAL DUE, same as the preview's
+    // flex row — right-aligning them left a blank stretch of rule with
+    // nothing above it.
     var totalsLeft = 323.3;
+    // Comfortable clearance below the table's bottom border so SUBTOTAL's
+    // capital letters don't poke up through the line above them.
+    var rowY = tableBottom + 16;
     var totalsLh = 20.3;
-    var rowY = 430.7;
     var priceNum = parseFloat(data.price);
     var shippingNum = parseFloat(data.shipping);
     if (isNaN(shippingNum)) shippingNum = 0;
@@ -2281,20 +2285,20 @@
 
     doc.setFontSize(10);
     doc.setFont("helvetica", "normal");
-    doc.text("SUBTOTAL", boxLeft - 8, rowY, { align: "right" });
+    doc.text("SUBTOTAL", totalsLeft, rowY);
     doc.setFont("helvetica", "bold");
     doc.text(formatPrice(data.price), pageRight - 6, rowY, { align: "right" });
     rowY += totalsLh;
 
     doc.setFont("helvetica", "normal");
-    doc.text("SHIPPING & HANDLING", boxLeft - 8, rowY, { align: "right" });
+    doc.text("SHIPPING & HANDLING", totalsLeft, rowY);
     doc.setFont("helvetica", "bold");
     doc.text(formatPrice(data.shipping || "0"), pageRight - 6, rowY, { align: "right" });
     rowY += totalsLh;
 
     doc.line(totalsLeft, rowY - totalsLh * 0.72, pageRight, rowY - totalsLh * 0.72);
     doc.setFont("helvetica", "normal");
-    doc.text("TOTAL DUE", boxLeft - 8, rowY, { align: "right" });
+    doc.text("TOTAL DUE", totalsLeft, rowY);
     doc.setFont("helvetica", "bold");
     doc.text(formatPrice(String(totalDue)), pageRight - 6, rowY, { align: "right" });
 
