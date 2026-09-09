@@ -373,7 +373,7 @@
   .inv-comments-title { font-weight: 700; margin-bottom: 3px; }
   #ivComments { margin: 0; padding-left: 14px; }
   #ivComments li { margin-bottom: 2px; }
-  .inv-footer { margin-top: auto; }
+  .inv-footer { margin-top: auto; text-align: center; }
   .inv-footer-contact { font-size: 6.6px; white-space: nowrap; }
   .inv-thanks { font-weight: 700; text-align: center; margin-top: 10px; font-size: 10px; }
 
@@ -2257,11 +2257,10 @@
     doc.setFont("helvetica", "bold");
     doc.text(formatPrice(data.price), pageRight - 6, rowMidY, { align: "right" });
 
-    // Totals box — a continuation of the TOTAL column, down through Subtotal /
-    // Shipping & handling / Total due.
+    // Totals — a continuation of the TOTAL column, down through Subtotal /
+    // Shipping & handling / Total due. No surrounding box (matches the
+    // on-screen preview) — just the rule above TOTAL DUE below.
     var boxLeft = colX[5], boxBottom = 486.2;
-    doc.line(boxLeft, tableTop, boxLeft, boxBottom);
-    doc.line(pageRight, tableTop, pageRight, boxBottom);
     var totalsLh = 20.3;
     var rowY = 430.7;
     var priceNum = parseFloat(data.price);
@@ -2287,7 +2286,6 @@
     doc.text("TOTAL DUE", boxLeft - 8, rowY, { align: "right" });
     doc.setFont("helvetica", "bold");
     doc.text(formatPrice(String(totalDue)), pageRight - 6, rowY, { align: "right" });
-    doc.line(boxLeft, boxBottom, pageRight, boxBottom);
 
     // Comments — whatever's in the Comments & special instructions field,
     // one line per bullet. Starts pre-filled with the standard terms (plus
@@ -2307,10 +2305,11 @@
     });
 
     doc.setFontSize(10);
-    doc.text("If you have any questions concerning this invoice, please contact SATORU, Inc. at info@satoru.us or 845.616.8631", 40, 573.4);
+    doc.setFont("helvetica", "normal");
+    doc.text("If you have any questions concerning this invoice, please contact SATORU, Inc. at info@satoru.us or 845.616.8631", 306, 744, { align: "center" });
     doc.setFontSize(12);
     doc.setFont("helvetica", "bold");
-    doc.text("Thank you for your business!", 306, 606.6, { align: "center" });
+    doc.text("Thank you for your business!", 306, 764.4, { align: "center" });
 
     var initials = storeInitials(data.store || data.customer);
     var filename = "I#" + (data.orderNo || "invoice") + (initials ? " " + initials : "") + ".pdf";
