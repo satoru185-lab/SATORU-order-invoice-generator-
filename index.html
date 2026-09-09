@@ -459,7 +459,6 @@
     <div>
       <div class="wordmark">SATORU<span class="dot">.</span></div>
       <div class="tagline">Order Bench — build a ring order docket and download it as a PDF.</div>
-      <div style="font-size:10px;color:#b7b2a8;margin-top:2px;" id="buildTag">build 2026-09-09-c</div>
     </div>
     <a class="recent-jump" href="#" id="modeBackLink" hidden>&larr; Order/Invoice</a>
     <a class="recent-jump" href="#recent" id="recentJumpLink">Recent orders</a>
@@ -1824,6 +1823,13 @@
     return words.map(function (w) { return w.charAt(0).toUpperCase(); }).join("");
   }
 
+  // For the saved filename: a store order gets the store's initials, same
+  // as always. A direct order (no store on file) gets "DO" instead of the
+  // customer's own initials — those were easy to mix up with a store's.
+  function filenameInitials(data) {
+    return data.store ? storeInitials(data.store) : "DO";
+  }
+
   function formatPrice(v) {
     if (v === "" || v === null || v === undefined) return "";
     var n = parseFloat(v);
@@ -2084,7 +2090,7 @@
     printSplit({ label: "IID", value: formatMm(data.iid) }, { label: "IOD", value: formatMm(data.iod) });
     printSplit({ label: "OID", value: formatMm(data.oid) }, { label: "OOD", value: formatMm(data.ood) });
 
-    var initials = storeInitials(data.store || data.customer);
+    var initials = filenameInitials(data);
     var filename = "O#" + (data.orderNo || "docket") + (initials ? " " + initials : "") + ".pdf";
     return { doc: doc, filename: filename };
   }
@@ -2329,16 +2335,7 @@
     doc.setFont("helvetica", "bold");
     doc.text("Thank you for your business!", 306, 764.4, { align: "center" });
 
-    // Temporary build marker (bottom-left corner, tiny/light) — purely to
-    // diagnose whether a generated PDF is coming from this current code.
-    // Safe to remove once that's confirmed.
-    doc.setFontSize(6);
-    doc.setFont("helvetica", "normal");
-    doc.setTextColor(200, 200, 200);
-    doc.text("build 2026-09-09-c", 10, 786);
-    doc.setTextColor.apply(doc, ink);
-
-    var initials = storeInitials(data.store || data.customer);
+    var initials = filenameInitials(data);
     var filename = "I#" + (data.orderNo || "invoice") + (initials ? " " + initials : "") + ".pdf";
     return { doc: doc, filename: filename };
   }
