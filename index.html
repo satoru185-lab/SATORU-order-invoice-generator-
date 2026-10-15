@@ -2031,9 +2031,19 @@
     return /earthworks/i.test(storeRaw || "");
   }
 
+  // Price/shipping/subtotal fields are plain text inputs, and a big number
+  // (especially yen amounts, often six figures) is natural to type with
+  // thousands commas — "302,500" — which plain parseFloat would otherwise
+  // cut off at the first comma (parseFloat("302,500") === 302). Every
+  // place that turns one of these fields into a number goes through this
+  // first so a comma never silently truncates the amount.
+  function parseMoney(v) {
+    return parseFloat(String(v === undefined || v === null ? "" : v).replace(/,/g, ""));
+  }
+
   function formatPrice(v, isYen) {
     if (v === "" || v === null || v === undefined) return "";
-    var n = parseFloat(v);
+    var n = parseMoney(v);
     if (isNaN(n)) return v;
     if (isYen) return "¥" + Math.round(n).toLocaleString("en-US");
     var hasCents = Math.round(n * 100) % 100 !== 0;
@@ -2127,7 +2137,7 @@
     }).join("");
 
     var subtotal = invoiceSubtotal(data);
-    var shippingNum = parseFloat(data.shipping);
+    var shippingNum = parseMoney(data.shipping);
     if (isNaN(shippingNum)) shippingNum = 0;
     var tax = computeTax(data, subtotal);
     var totalDue = subtotal + shippingNum + tax.amount;
@@ -2537,7 +2547,7 @@
   }
   function invoiceSubtotal(data) {
     return invoiceItems(data).reduce(function (sum, item) {
-      var n = parseFloat(item.price);
+      var n = parseMoney(item.price);
       return sum + (isNaN(n) ? 0 : n);
     }, 0);
   }
@@ -2695,7 +2705,7 @@
     var rowY = tableBottom + 16;
     var totalsLh = 20.3;
     var subtotal = invoiceSubtotal(data);
-    var shippingNum = parseFloat(data.shipping);
+    var shippingNum = parseMoney(data.shipping);
     if (isNaN(shippingNum)) shippingNum = 0;
     var tax = computeTax(data, subtotal);
     var totalDue = subtotal + shippingNum + tax.amount;
