@@ -156,6 +156,36 @@
   }
   .chooser-sub { font-size: 12.5px; color: var(--ink-soft); margin-top: 2px; }
 
+  /* "How many rings for this order number?" — shown between the landing
+     chooser and the order form itself, only on the Order Form path, so a
+     multi-ring order (e.g. O#2603306-1 and -2) gets a tab per ring instead
+     of being typed as two completely separate orders. */
+  .ring-count-chooser { max-width: 480px; margin: 56px auto; padding: 0 24px; text-align: center; }
+  .ring-count-heading { font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 19px; color: var(--ink); margin-bottom: 6px; }
+  .ring-count-sub { font-size: 13px; color: var(--ink-soft); margin: 0 0 22px; line-height: 1.5; }
+  .ring-count-options { display: flex; gap: 10px; justify-content: center; margin-bottom: 20px; }
+  .ring-count-btn {
+    width: 56px; height: 56px; border-radius: 10px; border: 1px solid var(--line);
+    background: var(--surface); font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 20px;
+    color: var(--ink); cursor: pointer;
+  }
+  .ring-count-btn:hover { border-color: var(--accent); color: var(--accent-strong); transform: translateY(-2px); }
+
+  /* Ring tabs sit above the per-ring fieldsets (Specification, Stones, Ring
+     dimensions, Price & notes) — Order No/Store/Customer/Dates above them
+     stay shared and visible once. Only shown once an order covers more
+     than one ring. */
+  .ring-tabs { display: flex; gap: 8px; margin: -8px 0 6px; flex-wrap: wrap; }
+  .ring-tab {
+    display: flex; flex-direction: column; align-items: flex-start; gap: 1px;
+    padding: 7px 12px; border-radius: 6px; border: 1px solid var(--line);
+    background: var(--surface); cursor: pointer; font-size: 12px; font-weight: 700;
+    color: var(--ink-soft); text-align: left;
+  }
+  .ring-tab .ring-tab-no { font-size: 10.5px; font-weight: 500; color: var(--ink-faint); font-family: 'IBM Plex Mono', monospace; }
+  .ring-tab.active { border-color: var(--accent); background: var(--accent-soft); color: var(--accent-strong); }
+  .ring-tab.active .ring-tab-no { color: var(--accent-strong); }
+
   .layout {
     display: grid;
     grid-template-columns: minmax(320px, 460px) 1fr;
@@ -235,7 +265,7 @@
   .field-note.is-auto { color: var(--accent-strong); font-weight: 600; }
 
   .add-new-row { display: flex; gap: 6px; margin-top: 8px; }
-  .add-new-row input { flex: 1; }
+  .add-new-row input, .add-new-row select { flex: 1; }
   .add-new-row button { padding: 9px 12px; font-size: 12.5px; }
 
   select {
@@ -429,6 +459,26 @@
 
   .recent-empty { font-size: 12.5px; color: var(--ink-faint); padding: 14px 0; }
 
+  /* Additional items (extra rings on the same invoice) — a short list of
+     cards under the Invoice fieldset, each removable, plus the two ways to
+     add one: pick a saved order, or type it in by hand. */
+  .extra-items { border-top: 1px dashed var(--line); padding-top: 14px; margin-top: 2px; }
+  .extra-items-empty { font-size: 12px; color: var(--ink-faint); margin-bottom: 8px; }
+  .extra-item-card {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    background: var(--sunken); border: 1px solid var(--line); border-radius: 4px;
+    padding: 8px 10px; margin-bottom: 8px;
+  }
+  .extra-item-card .ei-main { font-size: 12.5px; font-weight: 600; font-family: 'IBM Plex Mono', monospace; color: var(--accent-strong); }
+  .extra-item-card .ei-sub { font-size: 11px; color: var(--ink-faint); margin-top: 2px; }
+  .extra-item-card .ei-del { background: none; border: none; color: var(--ink-faint); font-size: 15px; padding: 2px 6px; line-height: 1; cursor: pointer; }
+  .extra-item-card .ei-del:hover { color: var(--danger); }
+  .extra-items details { border: 1px solid var(--line); border-radius: 4px; padding: 10px 12px; margin-top: 8px; }
+  .extra-items summary { cursor: pointer; font-size: 11.5px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--accent-strong); }
+  .extra-items details[open] summary { margin-bottom: 10px; }
+  .extra-items details .row { margin-top: 8px; }
+  .extra-items details > div:not(.row) { margin-top: 8px; }
+
   /* Print isolates the docket sheet itself — same absolute/percentage layout
      used for the on-screen preview, just scaled up to the actual page instead
      of the ~480px preview box, so it lines up on paper exactly like the PDF.
@@ -489,6 +539,18 @@
     </button>
   </div>
 
+  <div class="ring-count-chooser" id="ringCountChooser" hidden>
+    <div class="ring-count-heading">How many rings for this order number?</div>
+    <div class="ring-count-sub">Same client, more than one ring — e.g. O#2603306-1 and O#2603306-2 — pick how many and fill each ring's own fields on its own tab. Just one ring is the usual case.</div>
+    <div class="ring-count-options">
+      <button type="button" class="ring-count-btn" data-count="1">1</button>
+      <button type="button" class="ring-count-btn" data-count="2">2</button>
+      <button type="button" class="ring-count-btn" data-count="3">3</button>
+      <button type="button" class="ring-count-btn" data-count="4">4</button>
+    </div>
+    <a class="recent-jump" href="#" id="ringCountBack">&larr; Back</a>
+  </div>
+
   <div class="app-body" id="appBody" hidden>
   <div class="layout">
     <form class="panel" id="orderForm" onsubmit="return false;">
@@ -525,6 +587,8 @@
           </div>
         </div>
       </fieldset>
+
+      <div class="ring-tabs" id="ringTabs" hidden></div>
 
       <fieldset>
         <legend>Specification</legend>
@@ -662,9 +726,45 @@
           </div>
         </div>
         <div>
+          <label for="salesTaxRate">Sales tax rate % <span style="text-transform:none;font-weight:400;">(optional)</span></label>
+          <input id="salesTaxRate" data-mono type="text" inputmode="decimal" placeholder="e.g. 8.625">
+          <div class="field-note">For direct (retail) orders that owe sales tax — store/wholesale orders usually leave this blank. Calculated off the price; leave blank for no tax line on the invoice.</div>
+        </div>
+        <div>
           <label for="invoiceComments">Comments &amp; special instructions <span style="text-transform:none;font-weight:400;">(one per line — edit freely before generating)</span></label>
           <textarea id="invoiceComments" placeholder="Total payment due on delivery&#10;Please include the invoice number on your check."></textarea>
           <div class="field-note">Starts filled in with the usual terms (plus your Notes above, if any) — change or delete any line before you generate the PDF.</div>
+        </div>
+
+        <input type="hidden" id="extraItemsJson" value="[]">
+        <div class="extra-items" id="extraItemsSection">
+          <label>Additional rings on this invoice <span style="text-transform:none;font-weight:400;">(optional)</span></label>
+          <div class="field-note">Same client, more than one ring — e.g. O#2603306-1 and O#2603306-2 — add the other order(s) here so they show as extra rows on this one invoice instead of a separate one.</div>
+          <div id="extraItemsList"></div>
+          <div class="add-new-row">
+            <select id="extraItemPicker"></select>
+            <button type="button" class="btn-ghost" id="extraItemAddBtn">Add from Recent orders</button>
+          </div>
+          <details id="extraItemManual">
+            <summary>Or add one manually</summary>
+            <div class="row">
+              <div><label for="exStyle">Style</label><input id="exStyle"></div>
+              <div><label for="exMetal">Metal</label><input id="exMetal"></div>
+            </div>
+            <div class="row">
+              <div><label for="exSize">Size</label><input id="exSize"></div>
+              <div><label for="exPrice">Price</label><input id="exPrice" data-mono type="text" inputmode="numeric" placeholder="2890"></div>
+            </div>
+            <div>
+              <label for="exStoneDetail">Stone detail</label>
+              <textarea id="exStoneDetail" placeholder="0.01ct DEF/VVS Diamond"></textarea>
+            </div>
+            <div class="row">
+              <div><label for="exWidthMm">Width (mm)</label><input id="exWidthMm" data-mono type="number" step="0.1" min="0"></div>
+              <div><label for="exHeightMm">Height (mm)</label><input id="exHeightMm" data-mono type="number" step="0.1" min="0"></div>
+            </div>
+            <button type="button" class="btn-ghost" id="exAddManualBtn">Add item</button>
+          </details>
         </div>
       </fieldset>
 
@@ -722,19 +822,11 @@
             <thead>
               <tr><th>Style</th><th>Size</th><th>Metal</th><th>Stones</th><th>Note</th><th>Total</th></tr>
             </thead>
-            <tbody>
-              <tr>
-                <td id="ivStyle"></td>
-                <td id="ivSize"></td>
-                <td id="ivMetal"></td>
-                <td class="inv-left" id="ivStones"></td>
-                <td class="inv-left" id="ivNote"></td>
-                <td class="inv-price" id="ivPrice"></td>
-              </tr>
-            </tbody>
+            <tbody id="ivItemsBody"></tbody>
           </table>
           <div class="inv-totals">
             <div><span>SUBTOTAL</span><span id="ivSubtotal">$0</span></div>
+            <div id="ivTaxRow" hidden><span id="ivTaxLabel">SALES TAX</span><span id="ivTaxAmt">$0</span></div>
             <div><span>SHIPPING &amp; HANDLING</span><span id="ivShipCost">$0</span></div>
             <div class="inv-total-due"><span>TOTAL DUE</span><span id="ivTotalDue">$0</span></div>
           </div>
@@ -768,7 +860,14 @@
 
   var FIELD_IDS = ["orderNo","store","customer","orderDate","dueDate","style","metal",
     "widthMm","heightMm","center","sign","size","iid","iod","oid","ood","price","notes",
-    "stoneDetail","storeAddress","storePhone","shipTo","invoiceDate","shipping","invoiceComments"];
+    "stoneDetail","storeAddress","storePhone","shipTo","invoiceDate","shipping","salesTaxRate","invoiceComments","extraItemsJson"];
+
+  // The fields that are genuinely per-ring — everything else in FIELD_IDS
+  // (Order No, Store, Customer, Dates, the whole Invoice fieldset) is
+  // shared across every ring on a multi-ring order (see the ring tabs
+  // below) and stays bound to the form the whole time.
+  var RING_FIELD_IDS = ["style", "metal", "widthMm", "heightMm", "center", "sign", "size",
+    "iid", "iod", "oid", "ood", "price", "notes", "stoneDetail"];
 
   var STORAGE_KEY = "orderBench.recentOrders.v1";
   var LAST_NO_KEY = "orderBench.lastOrderNo";
@@ -955,6 +1054,90 @@
     }
     lastAutoStoneDetail = "";
     lastAutoComments = ($("invoiceComments").value === defaultComments) ? defaultComments : "";
+  }
+
+  // Multi-ring orders — same client, more than one ring under one order
+  // number (e.g. O#2603306-1 and -2), picked via "How many rings for this
+  // order number?" on Start a new ring order docket. Order No/Store/
+  // Customer/Dates/Invoice fields stay on the form the whole time; only the
+  // per-ring fields (RING_FIELD_IDS) swap in and out as the ring tabs are
+  // clicked, so every bit of existing style/metal/size/pricing logic below
+  // keeps working unmodified on whichever ring tab is active.
+  function blankRingData() {
+    var o = {};
+    RING_FIELD_IDS.forEach(function (id) { o[id] = ""; });
+    return o;
+  }
+
+  var ringCount = 1;
+  var activeRingIndex = 0;
+  var ringsState = [blankRingData()];
+
+  function captureActiveRing() {
+    var obj = {};
+    RING_FIELD_IDS.forEach(function (id) { obj[id] = $(id).value.trim(); });
+    ringsState[activeRingIndex] = obj;
+  }
+
+  function loadRing(idx) {
+    var obj = ringsState[idx] || blankRingData();
+    RING_FIELD_IDS.forEach(function (id) { $(id).value = obj[id] || ""; });
+    syncSizePickerFromValue(obj.size || "");
+    syncMetalPickerFromValue(obj.metal || "");
+    syncStylePickerFromValue(obj.style || "");
+    updateCenterRangeUI();
+    updateHeightPickerUI();
+    updateWidthPickerUI();
+    lastAutoStoneDetail = "";
+  }
+
+  // Builds this ring's full, saveable order data — shared fields (Order No
+  // with a "-N" suffix once there's more than one ring, Store, Customer,
+  // Dates, Invoice fields) merged with this one ring's own fields — the
+  // same shape a plain single-ring order always had, so Recent Orders, the
+  // docket PDF, and the invoice's "Add from Recent orders" picker all
+  // treat it identically to any other saved order.
+  function ringOrderData(sharedData, ringFields, ringIndex, totalRings) {
+    var merged = {};
+    FIELD_IDS.forEach(function (id) { merged[id] = sharedData[id]; });
+    RING_FIELD_IDS.forEach(function (id) { merged[id] = ringFields[id]; });
+    if (totalRings > 1 && sharedData.orderNo) {
+      merged.orderNo = sharedData.orderNo + "-" + (ringIndex + 1);
+    }
+    return merged;
+  }
+
+  function startRingCount(n) {
+    ringCount = n;
+    activeRingIndex = 0;
+    ringsState = [];
+    for (var i = 0; i < n; i++) ringsState.push(blankRingData());
+    renderRingTabs();
+  }
+
+  function renderRingTabs() {
+    var el = $("ringTabs");
+    if (!el) return;
+    if (ringCount <= 1) { el.hidden = true; el.innerHTML = ""; return; }
+    el.hidden = false;
+    var base = $("orderNo").value.trim();
+    el.innerHTML = ringsState.map(function (r, i) {
+      var num = base ? base + "-" + (i + 1) : "Ring " + (i + 1);
+      return '<button type="button" class="ring-tab' + (i === activeRingIndex ? " active" : "") + '" data-idx="' + i + '">' +
+        "Ring " + (i + 1) + '<span class="ring-tab-no">' + escapeHtml(num) + "</span>" +
+        "</button>";
+    }).join("");
+    Array.prototype.forEach.call(el.querySelectorAll(".ring-tab"), function (btn) {
+      btn.addEventListener("click", function () {
+        var idx = parseInt(btn.getAttribute("data-idx"), 10);
+        if (idx === activeRingIndex) return;
+        captureActiveRing();
+        activeRingIndex = idx;
+        loadRing(activeRingIndex);
+        renderRingTabs();
+        refreshFromForm();
+      });
+    });
   }
 
   // Ring Sizer Chart — Japan size / mm and USA size / mm, from the shop's own chart.
@@ -1838,6 +2021,21 @@
     return "$" + n.toLocaleString("en-US", { minimumFractionDigits: hasCents ? 2 : 0, maximumFractionDigits: 2 });
   }
 
+  // Sales tax — a rate (e.g. 8.625) typed in on direct/retail orders,
+  // applied to the subtotal (every item's price, not shipping). Blank or
+  // zero rate means no tax line at all, so store/wholesale invoices stay
+  // exactly as before.
+  function computeTax(data, subtotal) {
+    var rate = parseFloat(data.salesTaxRate);
+    if (isNaN(rate) || rate <= 0 || !(subtotal > 0)) return { rate: 0, amount: 0 };
+    return { rate: rate, amount: Math.round(subtotal * (rate / 100) * 100) / 100 };
+  }
+
+  // Trim a rate like 8.625 or 8.000 down to "8.625" / "8" for the label.
+  function formatTaxRate(rate) {
+    return String(Math.round(rate * 1000) / 1000);
+  }
+
   function line(label, value, bold) {
     return '<div class="line"><span class="lbl' + (bold ? ' strong' : '') + '">' + label + ':</span>' +
       '<span class="val">' + (value || "") + "</span></div>";
@@ -1889,25 +2087,32 @@
     if (!shipLines.length) shipLines = ["SAME"];
     $("ivShip").innerHTML = shipLines.map(function (l) { return "<div>" + l + "</div>"; }).join("");
 
-    $("ivStyle").textContent = data.style || "";
-    $("ivSize").textContent = data.size || "";
-    $("ivMetal").textContent = data.metal || "";
+    var items = invoiceItems(data);
+    $("ivItemsBody").innerHTML = items.map(function (item) {
+      var lines = invoiceItemLines(item);
+      var stonesHtml = lines.stoneLines.map(function (l) { return "<div>" + escapeHtml(l) + "</div>"; }).join("");
+      var noteHtml = lines.noteLines.map(function (l) { return "<div>" + escapeHtml(l) + "</div>"; }).join("");
+      return "<tr>" +
+        "<td>" + escapeHtml(item.style || "") + "</td>" +
+        "<td>" + escapeHtml(item.size || "") + "</td>" +
+        "<td>" + escapeHtml(item.metal || "") + "</td>" +
+        "<td class=\"inv-left\">" + stonesHtml + "</td>" +
+        "<td class=\"inv-left\">" + noteHtml + "</td>" +
+        "<td class=\"inv-price\">" + formatPrice(item.price) + "</td>" +
+        "</tr>";
+    }).join("");
 
-    var stoneLines = invoiceStoneLines(data);
-    $("ivStones").innerHTML = stoneLines.map(function (l) { return "<div>" + l + "</div>"; }).join("");
-
-    var noteLines = [];
-    if (data.widthMm) noteLines.push("Width: " + data.widthMm + "mm");
-    if (data.heightMm) noteLines.push("Height:" + data.heightMm + "mm");
-    $("ivNote").innerHTML = noteLines.map(function (l) { return "<div>" + l + "</div>"; }).join("");
-
-    $("ivPrice").textContent = formatPrice(data.price);
-
-    var priceNum = parseFloat(data.price);
+    var subtotal = invoiceSubtotal(data);
     var shippingNum = parseFloat(data.shipping);
     if (isNaN(shippingNum)) shippingNum = 0;
-    var totalDue = (isNaN(priceNum) ? 0 : priceNum) + shippingNum;
-    $("ivSubtotal").textContent = formatPrice(data.price);
+    var tax = computeTax(data, subtotal);
+    var totalDue = subtotal + shippingNum + tax.amount;
+    $("ivSubtotal").textContent = formatPrice(String(subtotal));
+    $("ivTaxRow").hidden = tax.amount <= 0;
+    if (tax.amount > 0) {
+      $("ivTaxLabel").textContent = "SALES TAX (" + formatTaxRate(tax.rate) + "%)";
+      $("ivTaxAmt").textContent = formatPrice(String(tax.amount));
+    }
     $("ivShipCost").textContent = formatPrice(data.shipping || "0");
     $("ivTotalDue").textContent = formatPrice(String(totalDue));
 
@@ -1935,6 +2140,8 @@
     var data = getFormData();
     renderPreview(data);
     renderInvoicePreview(data);
+    renderExtraItemsList(data);
+    renderRingTabs();
     updateOrderModeUI();
   }
 
@@ -1963,6 +2170,7 @@
     if (jumpLink) jumpLink.textContent = "Recent orders" + (list.length ? " (" + list.length + ")" : "");
     if (!list.length) {
       el.innerHTML = '<div class="recent-empty">No saved orders yet — download a PDF to add one here.</div>';
+      populateExtraItemPicker();
       return;
     }
     el.innerHTML = list.map(function (item, i) {
@@ -1980,6 +2188,12 @@
         var idx = parseInt(card.getAttribute("data-idx"), 10);
         var list = loadRecent();
         if (list[idx]) {
+          // A saved order is always a single ring — reopening one steps
+          // back out of any multi-ring tabs that happened to be active.
+          ringCount = 1;
+          activeRingIndex = 0;
+          ringsState = [blankRingData()];
+          renderRingTabs();
           setFormData(list[idx]);
           refreshFromForm();
           $("statusNote").textContent = "Loaded order " + (list[idx].orderNo || "");
@@ -1996,6 +2210,7 @@
         renderRecentList();
       });
     });
+    populateExtraItemPicker();
   }
 
   function addToRecent(data) {
@@ -2005,36 +2220,96 @@
     renderRecentList();
   }
 
-  // Builds the docket PDF and returns {doc, filename} without saving/opening
-  // it — generatePDF() (Download) and printDocketPDF() (Print) both wrap
-  // this so the two buttons always produce byte-identical documents. Print
-  // deliberately goes through this same fixed-size PDF instead of the
-  // browser's own print rendering (window.print() + @media print), because
-  // that CSS-driven route is unreliable on Safari/iOS in particular — it can
-  // shrink the whole docket into a corner of the page regardless of what the
-  // stylesheet asks for. A real PDF opened in the browser's PDF viewer always
-  // prints at the correct physical size, since there's no page layout left
-  // for the browser to reinterpret.
-  function buildDocketPDF(data) {
-    var jsPDFCtor = window.jspdf && window.jspdf.jsPDF;
-    if (!jsPDFCtor) {
-      $("statusNote").textContent = "PDF library did not load — check your connection and try again.";
-      return null;
+  // The "Add from Recent orders" dropdown under Additional items — kept in
+  // sync with Recent Orders itself (same data, just offered as a picker
+  // instead of cards), so a just-saved second ring is immediately pickable.
+  function populateExtraItemPicker() {
+    var sel = $("extraItemPicker");
+    if (!sel) return;
+    var list = loadRecent();
+    if (!list.length) {
+      sel.innerHTML = '<option value="">No saved orders yet</option>';
+      return;
     }
-    // Full letter page, docket positioned in the top-right quarter — coordinates below
-    // are lifted directly from the original file's own PDF (logo image position, text
-    // column, 12pt Helvetica, 24pt line pitch), so this prints in the same spot, at the
-    // same size, with the same logo, every time.
-    var doc = new jsPDFCtor({ unit: "pt", format: "letter" });
-    var fieldX = 344.7;
-    var contentRight = 583.5;
+    sel.innerHTML = list.map(function (item, i) {
+      var label = "O#" + (item.orderNo || "—") + " — " + (item.store || item.customer || "No store") +
+        (item.style ? " (" + item.style + (item.size ? " " + item.size : "") + ")" : "");
+      return '<option value="' + i + '">' + escapeHtml(label) + "</option>";
+    }).join("");
+  }
+
+  // The "Additional items" list under Invoice — one card per extra ring
+  // added to this invoice (picked from Recent Orders or typed in by hand),
+  // each removable on its own, separate from the main order above it.
+  function renderExtraItemsList(data) {
+    var el = $("extraItemsList");
+    if (!el) return;
+    var items = getExtraItems(data);
+    if (!items.length) {
+      el.innerHTML = '<div class="extra-items-empty">No additional items yet — this invoice shows just the order above.</div>';
+      return;
+    }
+    el.innerHTML = items.map(function (item, i) {
+      var sub = [item.style, item.metal, item.size].filter(Boolean).join(" · ");
+      return '<div class="extra-item-card">' +
+        "<div>" +
+        '<div class="ei-main">' + escapeHtml(item.orderNo ? "O#" + item.orderNo : (item.style || "Item")) + "</div>" +
+        '<div class="ei-sub">' + escapeHtml(sub) + (sub ? " — " : "") + escapeHtml(formatPrice(item.price) || "") + "</div>" +
+        "</div>" +
+        '<button type="button" class="ei-del" data-idx="' + i + '" title="Remove">×</button>' +
+        "</div>";
+    }).join("");
+    Array.prototype.forEach.call(el.querySelectorAll(".ei-del"), function (btn) {
+      btn.addEventListener("click", function () {
+        var idx = parseInt(btn.getAttribute("data-idx"), 10);
+        var current = getExtraItems(getFormData());
+        current.splice(idx, 1);
+        setExtraItems(current);
+        refreshFromForm();
+      });
+    });
+  }
+
+  // Docket block geometry — the order-ticket text column normally sits in
+  // the top-right quarter of the page (coordinates lifted directly from the
+  // original paper docket's own PDF: logo image position, text column,
+  // 12pt Helvetica, 24pt line pitch). When more than one ring shares an
+  // order number, each additional ring gets its own block in another
+  // quadrant — mirrored left/right and top/bottom off those same original
+  // numbers — instead of a separate page per ring.
+  var DOCKET_FIELD_X = 344.7, DOCKET_CONTENT_RIGHT = 583.5, DOCKET_TOP_Y = 59;
+  var DOCKET_LOGO_X = 390.8, DOCKET_LOGO_Y = 6;
+  var DOCKET_PAGE_W = 612, DOCKET_PAGE_H = 792;
+
+  function docketQuadrantOrigins(n) {
+    var blockW = DOCKET_CONTENT_RIGHT - DOCKET_FIELD_X;
+    var mirroredFieldX = DOCKET_PAGE_W - DOCKET_CONTENT_RIGHT; // same margin from the left edge as the original has from the right
+    var logoOffsetX = DOCKET_LOGO_X - DOCKET_FIELD_X;
+    var halfH = DOCKET_PAGE_H / 2;
+    var quads = [
+      { fieldX: DOCKET_FIELD_X, y0: DOCKET_TOP_Y, logoY: DOCKET_LOGO_Y },                   // top-right (original)
+      { fieldX: mirroredFieldX, y0: DOCKET_TOP_Y, logoY: DOCKET_LOGO_Y },                   // top-left
+      { fieldX: DOCKET_FIELD_X, y0: DOCKET_TOP_Y + halfH, logoY: DOCKET_LOGO_Y + halfH },   // bottom-right
+      { fieldX: mirroredFieldX, y0: DOCKET_TOP_Y + halfH, logoY: DOCKET_LOGO_Y + halfH }    // bottom-left
+    ];
+    return quads.slice(0, n).map(function (q) {
+      return { fieldX: q.fieldX, contentRight: q.fieldX + blockW, y0: q.y0, logoX: q.fieldX + logoOffsetX, logoY: q.logoY };
+    });
+  }
+
+  // Draws one ring's docket block at the given quadrant origin. Identical
+  // field-by-field to the original single-block docket — only fieldX/
+  // contentRight/y0/logo position move between quadrants.
+  function drawDocketBlock(doc, data, origin) {
+    var fieldX = origin.fieldX;
+    var contentRight = origin.contentRight;
     var secondColX = fieldX + 95; // fixed second-column tab stop, matches the original's spacing
     var ink = [0, 0, 0];
-
-    doc.addImage(LOGO_DATA_URI, "PNG", 390.8, 6, 150, 22);
-
-    var y = 59;
+    var y = origin.y0;
     var lh = 24;
+
+    doc.addImage(LOGO_DATA_URI, "PNG", origin.logoX, origin.logoY, 150, 22);
+
     doc.setFontSize(12);
     doc.setTextColor.apply(doc, ink);
 
@@ -2089,9 +2364,50 @@
     printNote(data.notes);
     printSplit({ label: "IID", value: formatMm(data.iid) }, { label: "IOD", value: formatMm(data.iod) });
     printSplit({ label: "OID", value: formatMm(data.oid) }, { label: "OOD", value: formatMm(data.ood) });
+  }
+
+  // Builds the docket PDF and returns {doc, filename} without saving/opening
+  // it — generatePDF() (Download) and printDocketPDF() (Print) both wrap
+  // this so the two buttons always produce byte-identical documents. Print
+  // deliberately goes through this same fixed-size PDF instead of the
+  // browser's own print rendering (window.print() + @media print), because
+  // that CSS-driven route is unreliable on Safari/iOS in particular — it can
+  // shrink the whole docket into a corner of the page regardless of what the
+  // stylesheet asks for. A real PDF opened in the browser's PDF viewer always
+  // prints at the correct physical size, since there's no page layout left
+  // for the browser to reinterpret.
+  function buildDocketPDF(data) {
+    var jsPDFCtor = window.jspdf && window.jspdf.jsPDF;
+    if (!jsPDFCtor) {
+      $("statusNote").textContent = "PDF library did not load — check your connection and try again.";
+      return null;
+    }
+    var doc = new jsPDFCtor({ unit: "pt", format: "letter" });
+    drawDocketBlock(doc, data, docketQuadrantOrigins(1)[0]);
 
     var initials = filenameInitials(data);
     var filename = "O#" + (data.orderNo || "docket") + (initials ? " " + initials : "") + ".pdf";
+    return { doc: doc, filename: filename };
+  }
+
+  // Two to four rings under one order number, printed on a single page —
+  // one docket block per ring, each in its own quadrant, instead of a
+  // separate page per ring. rings is an array of full per-ring data objects
+  // (see ringOrderData) already carrying their own "-1"/"-2"/... order
+  // numbers.
+  function buildMultiDocketPDF(rings) {
+    var jsPDFCtor = window.jspdf && window.jspdf.jsPDF;
+    if (!jsPDFCtor) {
+      $("statusNote").textContent = "PDF library did not load — check your connection and try again.";
+      return null;
+    }
+    var doc = new jsPDFCtor({ unit: "pt", format: "letter" });
+    var origins = docketQuadrantOrigins(rings.length);
+    rings.forEach(function (ringData, i) { drawDocketBlock(doc, ringData, origins[i]); });
+
+    var base = (rings[0] && rings[0].orderNo) ? rings[0].orderNo.replace(/-\d+$/, "") : "docket";
+    var initials = filenameInitials(rings[0] || {});
+    var filename = "O#" + base + "-1to" + rings.length + (initials ? " " + initials : "") + ".pdf";
     return { doc: doc, filename: filename };
   }
 
@@ -2102,8 +2418,10 @@
     return true;
   }
 
-  function printDocketPDF(data) {
-    var built = buildDocketPDF(data);
+  // Shared by every "open a built PDF as a print preview" path (single-ring
+  // and multi-ring Print both use this) so the pop-up-blocked fallback
+  // message only has to live in one place.
+  function openPrintPreview(built) {
     if (!built) return false;
     built.doc.autoPrint();
     var opened = window.open(built.doc.output("bloburl"), "_blank");
@@ -2112,6 +2430,10 @@
       return false;
     }
     return true;
+  }
+
+  function printDocketPDF(data) {
+    return openPrintPreview(buildDocketPDF(data));
   }
 
   var INVOICE_MONTHS = ["JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE",
@@ -2160,6 +2482,39 @@
     var lines = DEFAULT_COMMENTS_BASE.slice();
     if (notes) lines.push(notes);
     return lines.join("\n");
+  }
+
+  // Additional items — same client, more than one ring (e.g. O#2603306-1
+  // and O#2603306-2), one invoice. Extra items are stored as a JSON array
+  // in the hidden extraItemsJson field (so they ride along through
+  // getFormData/setFormData/Recent Orders for free, the same as every
+  // other field), each one shaped exactly like a saved order — style,
+  // metal, size, stoneDetail/sign, widthMm, heightMm, price — so the same
+  // per-item rendering logic below works identically for the main order
+  // and every extra one.
+  function getExtraItems(data) {
+    try {
+      var arr = JSON.parse((data && data.extraItemsJson) || "[]");
+      return Array.isArray(arr) ? arr : [];
+    } catch (e) { return []; }
+  }
+  function setExtraItems(arr) {
+    $("extraItemsJson").value = JSON.stringify(arr);
+  }
+  function invoiceItems(data) {
+    return [data].concat(getExtraItems(data));
+  }
+  function invoiceItemLines(item) {
+    var noteLines = [];
+    if (item.widthMm) noteLines.push("Width: " + item.widthMm + "mm");
+    if (item.heightMm) noteLines.push("Height:" + item.heightMm + "mm");
+    return { stoneLines: invoiceStoneLines(item), noteLines: noteLines };
+  }
+  function invoiceSubtotal(data) {
+    return invoiceItems(data).reduce(function (sum, item) {
+      var n = parseFloat(item.price);
+      return sum + (isNaN(n) ? 0 : n);
+    }, 0);
   }
 
   // Same fixed letter-page invoice every time — logo, "From" business block,
@@ -2228,18 +2583,34 @@
     if (!shipLines.length) shipLines = ["SAME"];
     shipLines.forEach(function (l) { doc.text(l, 310, shipY); shipY += toLh; });
 
-    // Item table — one line item per order, matching how this tool is used.
-    var tableTop = 339, tableHeaderRule = 360.5, tableBottom = 424.5;
+    // Item table — one row per order normally, plus one more row for each
+    // additional ring added below (same client, more than one ring, one
+    // invoice — e.g. O#2603306-1 and -2). Each row's height grows with its
+    // own Stones/Note line count, floored at the original single-row
+    // height so a plain one-item invoice renders pixel-for-pixel as before.
+    var tableTop = 339, tableHeaderRule = 360.5;
     var colX = [42.2, 119.7, 175.6, 248.8, 386.5, 528.5, pageRight];
     var colCenter = colX.slice(0, -1).map(function (x, i) { return (x + colX[i + 1]) / 2; });
-    // A baseline placed at the row's true geometric center reads as sitting
-    // too high — text has almost no descender, so its visible mass sits
-    // above the baseline. Nudging the baseline down (~0.4x the row font
-    // size) is what actually looks centered, for both the single-line
-    // cells and the 2-line Stones/Note blocks below.
-    var rowMidY = (tableHeaderRule + tableBottom) / 2 + 4;
-    // Same centering treatment for the header row itself — it was pinned to
-    // a fixed y that sat close to the row's top border with a big gap below.
+    var stoneLh = 13.2;
+
+    var items = invoiceItems(data);
+    var itemLines = items.map(invoiceItemLines);
+    var rowBottoms = [];
+    (function () {
+      var y = tableHeaderRule;
+      itemLines.forEach(function (lines) {
+        var n = Math.max(lines.stoneLines.length, lines.noteLines.length, 1);
+        y += Math.max(64, 20 + n * stoneLh);
+        rowBottoms.push(y);
+      });
+    })();
+    var tableBottom = rowBottoms[rowBottoms.length - 1];
+    // Same centering treatment as the header row below — a baseline placed
+    // at a row's true geometric center reads as sitting too high, since
+    // text has almost no descender and its visible mass sits above the
+    // baseline. Nudging the baseline down (~0.4x the row font size) is what
+    // actually looks centered, for both single-line cells and the 2-line
+    // Stones/Note blocks.
     var headerMidY = (tableTop + tableHeaderRule) / 2 + 4;
 
     doc.setDrawColor(0, 0, 0);
@@ -2247,6 +2618,10 @@
     doc.rect(colX[0], tableTop, pageRight - colX[0], tableBottom - tableTop);
     doc.line(colX[0], tableHeaderRule, pageRight, tableHeaderRule);
     [1, 2, 3, 4, 5].forEach(function (i) { doc.line(colX[i], tableTop, colX[i], tableBottom); });
+    // A divider between each pair of item rows, only when there's more than one.
+    for (var rb = 0; rb < rowBottoms.length - 1; rb++) {
+      doc.line(colX[0], rowBottoms[rb], pageRight, rowBottoms[rb]);
+    }
 
     doc.setFontSize(10);
     doc.setFont("helvetica", "bold");
@@ -2254,24 +2629,28 @@
       doc.text(label, colCenter[i], headerMidY, { align: "center" });
     });
 
-    doc.setFont("helvetica", "normal");
-    doc.text(data.style || "", colCenter[0], rowMidY, { align: "center" });
-    doc.text(data.size || "", colCenter[1], rowMidY, { align: "center" });
-    doc.text(data.metal || "", colCenter[2], rowMidY, { align: "center" });
+    var rowTop = tableHeaderRule;
+    items.forEach(function (item, idx) {
+      var rowBottom = rowBottoms[idx];
+      var rowMidY = (rowTop + rowBottom) / 2 + 4;
+      var lines = itemLines[idx];
 
-    var stoneLines = invoiceStoneLines(data);
-    var stoneLh = 13.2;
-    var stoneY = rowMidY - ((stoneLines.length - 1) / 2) * stoneLh;
-    stoneLines.forEach(function (l) { doc.text(l, colX[3] + 4.2, stoneY); stoneY += stoneLh; });
+      doc.setFont("helvetica", "normal");
+      doc.text(item.style || "", colCenter[0], rowMidY, { align: "center" });
+      doc.text(item.size || "", colCenter[1], rowMidY, { align: "center" });
+      doc.text(item.metal || "", colCenter[2], rowMidY, { align: "center" });
 
-    var noteLines = [];
-    if (data.widthMm) noteLines.push("Width: " + data.widthMm + "mm");
-    if (data.heightMm) noteLines.push("Height:" + data.heightMm + "mm");
-    var noteY = rowMidY - ((noteLines.length - 1) / 2) * stoneLh;
-    noteLines.forEach(function (l) { doc.text(l, colX[4] + 4.2, noteY); noteY += stoneLh; });
+      var stoneY = rowMidY - ((lines.stoneLines.length - 1) / 2) * stoneLh;
+      lines.stoneLines.forEach(function (l) { doc.text(l, colX[3] + 4.2, stoneY); stoneY += stoneLh; });
 
-    doc.setFont("helvetica", "bold");
-    doc.text(formatPrice(data.price), pageRight - 6, rowMidY, { align: "right" });
+      var noteY = rowMidY - ((lines.noteLines.length - 1) / 2) * stoneLh;
+      lines.noteLines.forEach(function (l) { doc.text(l, colX[4] + 4.2, noteY); noteY += stoneLh; });
+
+      doc.setFont("helvetica", "bold");
+      doc.text(formatPrice(item.price), pageRight - 6, rowMidY, { align: "right" });
+
+      rowTop = rowBottom;
+    });
 
     // Totals — a continuation of the TOTAL column, down through Subtotal /
     // Shipping & handling / Total due. No surrounding box (matches the
@@ -2287,17 +2666,26 @@
     // capital letters don't poke up through the line above them.
     var rowY = tableBottom + 16;
     var totalsLh = 20.3;
-    var priceNum = parseFloat(data.price);
+    var subtotal = invoiceSubtotal(data);
     var shippingNum = parseFloat(data.shipping);
     if (isNaN(shippingNum)) shippingNum = 0;
-    var totalDue = (isNaN(priceNum) ? 0 : priceNum) + shippingNum;
+    var tax = computeTax(data, subtotal);
+    var totalDue = subtotal + shippingNum + tax.amount;
 
     doc.setFontSize(10);
     doc.setFont("helvetica", "normal");
     doc.text("SUBTOTAL", totalsLeft, rowY);
     doc.setFont("helvetica", "bold");
-    doc.text(formatPrice(data.price), pageRight - 6, rowY, { align: "right" });
+    doc.text(formatPrice(String(subtotal)), pageRight - 6, rowY, { align: "right" });
     rowY += totalsLh;
+
+    if (tax.amount > 0) {
+      doc.setFont("helvetica", "normal");
+      doc.text("SALES TAX (" + formatTaxRate(tax.rate) + "%)", totalsLeft, rowY);
+      doc.setFont("helvetica", "bold");
+      doc.text(formatPrice(String(tax.amount)), pageRight - 6, rowY, { align: "right" });
+      rowY += totalsLh;
+    }
 
     doc.setFont("helvetica", "normal");
     doc.text("SHIPPING & HANDLING", totalsLeft, rowY);
@@ -2315,13 +2703,15 @@
     // one line per bullet. Starts pre-filled with the standard terms (plus
     // Notes, if any) but is fully editable before you generate, so this
     // reads back exactly what's on screen rather than fixed boilerplate.
+    // Anchored off the final totals rowY (not a fixed y) so an extra SALES
+    // TAX row pushes this down instead of the two overlapping.
     doc.setFontSize(10);
     doc.setFont("helvetica", "bold");
-    doc.text("Comments and special instructions", 40, 502.4);
+    doc.text("Comments and special instructions", 40, rowY + 21.3);
     doc.setFont("helvetica", "normal");
     var comments = textLines(data.invoiceComments);
     if (!comments.length) comments = DEFAULT_COMMENTS_BASE.slice();
-    var cy = 520.6;
+    var cy = rowY + 39.5;
     comments.forEach(function (c, i) {
       var wrapped = doc.splitTextToSize((i + 1) + ". " + c, pageRight - 40);
       doc.text(wrapped, 40, cy);
@@ -2374,6 +2764,7 @@
     blank.orderNo = suggestNextOrderNo();
     blank.orderDate = new Date().toISOString().slice(0, 10);
     blank.invoiceComments = computeDefaultComments("");
+    blank.extraItemsJson = "[]";
     return blank;
   }
 
@@ -2572,10 +2963,32 @@
       recomputePrice();
     });
 
+    // Collects every ring's data (flushing whichever tab is currently
+    // active first) as full, saveable order objects — same shape as any
+    // single-ring order, each with its own "-N" suffix once there's more
+    // than one ring. Used by Download/Print/Generate Invoice whenever
+    // ringCount > 1.
+    function collectRings(sharedData) {
+      captureActiveRing();
+      return ringsState.map(function (r, i) { return ringOrderData(sharedData, r, i, ringCount); });
+    }
+
     $("downloadBtn").addEventListener("click", function () {
       var data = getFormData();
       if (!data.orderNo && !data.store) {
         $("statusNote").textContent = "Add at least an order number or store before downloading.";
+        return;
+      }
+      if (ringCount > 1) {
+        var rings = collectRings(data);
+        var built = buildMultiDocketPDF(rings);
+        if (!built) return;
+        built.doc.save(built.filename);
+        if (data.orderNo && /^\d+$/.test(data.orderNo)) {
+          localStorage.setItem(LAST_NO_KEY, data.orderNo);
+        }
+        rings.forEach(function (r) { addToRecent(r); });
+        $("statusNote").textContent = "Downloaded " + ringCount + " rings on one page and saved to Recent orders.";
         return;
       }
       generatePDF(data);
@@ -2592,6 +3005,13 @@
         $("statusNote").textContent = "Add at least an order number or store before printing.";
         return;
       }
+      if (ringCount > 1) {
+        var rings = collectRings(data);
+        if (!openPrintPreview(buildMultiDocketPDF(rings))) return;
+        rings.forEach(function (r) { addToRecent(r); });
+        $("statusNote").textContent = "Opened as a PDF — use your browser/share sheet's Print option from there.";
+        return;
+      }
       if (!printDocketPDF(data)) return;
       addToRecent(data);
       $("statusNote").textContent = "Opened as a PDF — use your browser/share sheet's Print option from there.";
@@ -2601,9 +3021,63 @@
     // "Generate Invoice" no longer builds a PDF on the spot — it just jumps
     // you into Invoice mode so you can see the invoice preview and adjust
     // Bill-to/Ship-to/Comments/etc. first. The actual PDF only gets made
-    // when you click Save PDF below, once it looks right.
+    // when you click Save PDF below, once it looks right. On a multi-ring
+    // order, every ring is saved to Recent Orders first (even if you never
+    // hit Download/Print) so the sibling ring(s) are immediately pickable
+    // from Additional items' "Add from Recent orders".
     $("invoiceBtn").addEventListener("click", function () {
+      if (ringCount > 1) {
+        var data = getFormData();
+        collectRings(data).forEach(function (r) { addToRecent(r); });
+      }
       enterMode("invoice");
+    });
+
+    // Additional items — "Add from Recent orders" pulls in a whole saved
+    // order (style/metal/size/stones/price and all) as one more invoice
+    // row with no retyping; the manual form below it covers a ring that
+    // was never saved as its own order. Either way the result lands in the
+    // extraItemsJson hidden field, so it rides along through Recent Orders
+    // like every other field (see getExtraItems/setExtraItems above).
+    $("extraItemAddBtn").addEventListener("click", function () {
+      var sel = $("extraItemPicker");
+      var idx = parseInt(sel.value, 10);
+      var list = loadRecent();
+      if (isNaN(idx) || !list[idx]) {
+        $("statusNote").textContent = "Pick a saved order to add first.";
+        return;
+      }
+      var current = getExtraItems(getFormData());
+      current.push(list[idx]);
+      setExtraItems(current);
+      refreshFromForm();
+      $("statusNote").textContent = "Added O#" + (list[idx].orderNo || "") + " to this invoice.";
+    });
+
+    $("exAddManualBtn").addEventListener("click", function () {
+      var item = {
+        orderNo: "",
+        style: $("exStyle").value.trim(),
+        metal: $("exMetal").value.trim(),
+        size: $("exSize").value.trim(),
+        price: $("exPrice").value.trim(),
+        stoneDetail: $("exStoneDetail").value.trim(),
+        sign: "",
+        widthMm: $("exWidthMm").value.trim(),
+        heightMm: $("exHeightMm").value.trim()
+      };
+      if (!item.style && !item.stoneDetail && !item.price) {
+        $("statusNote").textContent = "Enter at least a style, stone detail, or price for the item.";
+        return;
+      }
+      var current = getExtraItems(getFormData());
+      current.push(item);
+      setExtraItems(current);
+      ["exStyle", "exMetal", "exSize", "exPrice", "exStoneDetail", "exWidthMm", "exHeightMm"].forEach(function (id) {
+        $(id).value = "";
+      });
+      refreshFromForm();
+      $("statusNote").textContent = "Added item to this invoice.";
     });
 
     // Shared by Save PDF and Print — the checks and the "remember this
@@ -2651,6 +3125,10 @@
     });
 
     $("clearBtn").addEventListener("click", function () {
+      ringCount = 1;
+      activeRingIndex = 0;
+      ringsState = [blankRingData()];
+      renderRingTabs();
       setFormData(blankOrderData());
       refreshFromForm();
       $("statusNote").textContent = "Blank order ready.";
@@ -2683,7 +3161,26 @@
       $("orderNo").focus();
     }
 
-    $("chooseOrder").addEventListener("click", function () { enterMode("order"); });
+    // Order Form first asks how many rings share this order number (most
+    // orders are just one — picking 1 behaves exactly as before) rather
+    // than jumping straight into the form.
+    $("chooseOrder").addEventListener("click", function () {
+      $("chooser").hidden = true;
+      $("ringCountChooser").hidden = false;
+    });
+    Array.prototype.forEach.call(document.querySelectorAll(".ring-count-btn"), function (btn) {
+      btn.addEventListener("click", function () {
+        startRingCount(parseInt(btn.getAttribute("data-count"), 10));
+        $("ringCountChooser").hidden = true;
+        enterMode("order");
+      });
+    });
+    $("ringCountBack").addEventListener("click", function (e) {
+      e.preventDefault();
+      $("ringCountChooser").hidden = true;
+      $("chooser").hidden = false;
+    });
+
     $("chooseInvoice").addEventListener("click", function () { enterMode("invoice"); });
 
     $("modeBackLink").addEventListener("click", function (e) {
