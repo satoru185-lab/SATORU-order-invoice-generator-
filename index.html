@@ -1784,6 +1784,14 @@
 
   function recomputePrice() {
     var note = $("priceNote");
+    // Earthworks is priced in yen, typed in directly — the dollar price
+    // sheet doesn't apply, so leave whatever's in Price alone instead of
+    // auto-filling (or clearing) it from a style/metal lookup.
+    if (isYenStore($("store").value)) {
+      note.textContent = "Earthworks orders are priced in ¥ — enter the price directly.";
+      note.className = "field-note is-manual";
+      return;
+    }
     var data = { metal: $("metal").value, style: $("style").value, widthMm: $("widthMm").value };
     // No store, but a customer name — a direct/retail order (your own rule:
     // blank Store + a Customer name means quote retail instead of wholesale).
@@ -2013,10 +2021,21 @@
     return data.store ? storeInitials(data.store) : "DO";
   }
 
-  function formatPrice(v) {
+  // Earthworks orders are priced and quoted in yen — typed directly into
+  // Price rather than computed from the dollar price sheet (see
+  // recomputePrice) — so Price displays as ¥ (whole yen, no cents) instead
+  // of $ everywhere it shows: docket preview, docket PDF, invoice preview,
+  // invoice PDF. Store is a shared field across a whole order/invoice, so
+  // one store name decides the currency for everything on it.
+  function isYenStore(storeRaw) {
+    return /earthworks/i.test(storeRaw || "");
+  }
+
+  function formatPrice(v, isYen) {
     if (v === "" || v === null || v === undefined) return "";
     var n = parseFloat(v);
     if (isNaN(n)) return v;
+    if (isYen) return "¥" + Math.round(n).toLocaleString("en-US");
     var hasCents = Math.round(n * 100) % 100 !== 0;
     return "$" + n.toLocaleString("en-US", { minimumFractionDigits: hasCents ? 2 : 0, maximumFractionDigits: 2 });
   }
@@ -2059,7 +2078,7 @@
     html += line("Center", data.center);
     html += line("Sign", data.sign);
     html += splitLine({ label: "Width", value: formatMm(data.widthMm) }, { label: "Height", value: formatMm(data.heightMm) });
-    html += line("Price", formatPrice(data.price));
+    html += line("Price", formatPrice(data.price, isYenStore(data.store)));
     html += line("Note", data.notes);
     html += splitLine({ label: "IID", value: formatMm(data.iid) }, { label: "IOD", value: formatMm(data.iod) });
     html += splitLine({ label: "OID", value: formatMm(data.oid) }, { label: "OOD", value: formatMm(data.ood) });
@@ -2087,6 +2106,11 @@
     if (!shipLines.length) shipLines = ["SAME"];
     $("ivShip").innerHTML = shipLines.map(function (l) { return "<div>" + l + "</div>"; }).join("");
 
+    // Store is shared across the whole invoice, so it alone decides the
+    // currency for every row and total on it (not each item's own store,
+    // which keeps a mixed-currency invoice from ever happening).
+    var yen = isYenStore(data.store);
+
     var items = invoiceItems(data);
     $("ivItemsBody").innerHTML = items.map(function (item) {
       var lines = invoiceItemLines(item);
@@ -2098,7 +2122,7 @@
         "<td>" + escapeHtml(item.metal || "") + "</td>" +
         "<td class=\"inv-left\">" + stonesHtml + "</td>" +
         "<td class=\"inv-left\">" + noteHtml + "</td>" +
-        "<td class=\"inv-price\">" + formatPrice(item.price) + "</td>" +
+        "<td class=\"inv-price\">" + formatPrice(item.price, yen) + "</td>" +
         "</tr>";
     }).join("");
 
@@ -2107,14 +2131,14 @@
     if (isNaN(shippingNum)) shippingNum = 0;
     var tax = computeTax(data, subtotal);
     var totalDue = subtotal + shippingNum + tax.amount;
-    $("ivSubtotal").textContent = formatPrice(String(subtotal));
+    $("ivSubtotal").textContent = formatPrice(String(subtotal), yen);
     $("ivTaxRow").hidden = tax.amount <= 0;
     if (tax.amount > 0) {
       $("ivTaxLabel").textContent = "SALES TAX (" + formatTaxRate(tax.rate) + "%)";
-      $("ivTaxAmt").textContent = formatPrice(String(tax.amount));
+      $("ivTaxAmt").textContent = formatPrice(String(tax.amount), yen);
     }
-    $("ivShipCost").textContent = formatPrice(data.shipping || "0");
-    $("ivTotalDue").textContent = formatPrice(String(totalDue));
+    $("ivShipCost").textContent = formatPrice(data.shipping || "0", yen);
+    $("ivTotalDue").textContent = formatPrice(String(totalDue), yen);
 
     var comments = textLines(data.invoiceComments);
     if (!comments.length) comments = DEFAULT_COMMENTS_BASE.slice();
@@ -2249,12 +2273,13 @@
       el.innerHTML = '<div class="extra-items-empty">No additional items yet — this invoice shows just the order above.</div>';
       return;
     }
+    var yen = isYenStore(data.store);
     el.innerHTML = items.map(function (item, i) {
       var sub = [item.style, item.metal, item.size].filter(Boolean).join(" · ");
       return '<div class="extra-item-card">' +
         "<div>" +
         '<div class="ei-main">' + escapeHtml(item.orderNo ? "O#" + item.orderNo : (item.style || "Item")) + "</div>" +
-        '<div class="ei-sub">' + escapeHtml(sub) + (sub ? " — " : "") + escapeHtml(formatPrice(item.price) || "") + "</div>" +
+        '<div class="ei-sub">' + escapeHtml(sub) + (sub ? " — " : "") + escapeHtml(formatPrice(item.price, yen) || "") + "</div>" +
         "</div>" +
         '<button type="button" class="ei-del" data-idx="' + i + '" title="Remove">×</button>' +
         "</div>";
@@ -2360,7 +2385,7 @@
     printLine("Center", data.center);
     printLine("Sign", data.sign);
     printSplit({ label: "Width", value: formatMm(data.widthMm) }, { label: "Height", value: formatMm(data.heightMm) });
-    printLine("Price", formatPrice(data.price));
+    printLine("Price", formatPrice(data.price, isYenStore(data.store)));
     printNote(data.notes);
     printSplit({ label: "IID", value: formatMm(data.iid) }, { label: "IOD", value: formatMm(data.iod) });
     printSplit({ label: "OID", value: formatMm(data.oid) }, { label: "OOD", value: formatMm(data.ood) });
@@ -2531,6 +2556,9 @@
     var pageRight = 584.9;
     var ink = [0, 0, 0];
     doc.setTextColor.apply(doc, ink);
+    // Store is shared across the whole invoice, so it alone decides the
+    // currency for every row and total on it.
+    var yen = isYenStore(data.store);
 
     doc.addImage(LOGO_DATA_URI, "PNG", 231.1, 36, 150, 22);
 
@@ -2647,7 +2675,7 @@
       lines.noteLines.forEach(function (l) { doc.text(l, colX[4] + 4.2, noteY); noteY += stoneLh; });
 
       doc.setFont("helvetica", "bold");
-      doc.text(formatPrice(item.price), pageRight - 6, rowMidY, { align: "right" });
+      doc.text(formatPrice(item.price, yen), pageRight - 6, rowMidY, { align: "right" });
 
       rowTop = rowBottom;
     });
@@ -2676,28 +2704,28 @@
     doc.setFont("helvetica", "normal");
     doc.text("SUBTOTAL", totalsLeft, rowY);
     doc.setFont("helvetica", "bold");
-    doc.text(formatPrice(String(subtotal)), pageRight - 6, rowY, { align: "right" });
+    doc.text(formatPrice(String(subtotal), yen), pageRight - 6, rowY, { align: "right" });
     rowY += totalsLh;
 
     if (tax.amount > 0) {
       doc.setFont("helvetica", "normal");
       doc.text("SALES TAX (" + formatTaxRate(tax.rate) + "%)", totalsLeft, rowY);
       doc.setFont("helvetica", "bold");
-      doc.text(formatPrice(String(tax.amount)), pageRight - 6, rowY, { align: "right" });
+      doc.text(formatPrice(String(tax.amount), yen), pageRight - 6, rowY, { align: "right" });
       rowY += totalsLh;
     }
 
     doc.setFont("helvetica", "normal");
     doc.text("SHIPPING & HANDLING", totalsLeft, rowY);
     doc.setFont("helvetica", "bold");
-    doc.text(formatPrice(data.shipping || "0"), pageRight - 6, rowY, { align: "right" });
+    doc.text(formatPrice(data.shipping || "0", yen), pageRight - 6, rowY, { align: "right" });
     rowY += totalsLh;
 
     doc.line(totalsLeft, rowY - totalsLh * 0.72, pageRight, rowY - totalsLh * 0.72);
     doc.setFont("helvetica", "normal");
     doc.text("TOTAL DUE", totalsLeft, rowY);
     doc.setFont("helvetica", "bold");
-    doc.text(formatPrice(String(totalDue)), pageRight - 6, rowY, { align: "right" });
+    doc.text(formatPrice(String(totalDue), yen), pageRight - 6, rowY, { align: "right" });
 
     // Comments — whatever's in the Comments & special instructions field,
     // one line per bullet. Starts pre-filled with the standard terms (plus
@@ -3028,7 +3056,16 @@
     $("invoiceBtn").addEventListener("click", function () {
       if (ringCount > 1) {
         var data = getFormData();
-        collectRings(data).forEach(function (r) { addToRecent(r); });
+        var rings = collectRings(data);
+        rings.forEach(function (r) { addToRecent(r); });
+        // Ring 1 becomes the invoice's main line item, ring 2 and on land
+        // automatically as Additional items below it — no manual "Add from
+        // Recent orders" needed when the invoice is generated straight off
+        // a multi-ring docket.
+        activeRingIndex = 0;
+        loadRing(0);
+        setExtraItems(rings.slice(1));
+        renderRingTabs();
       }
       enterMode("invoice");
     });
