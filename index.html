@@ -2113,7 +2113,7 @@
 
     $("ivTo").textContent = "To: " + (data.store || data.customer || "");
     var toLines = [];
-    if (data.store && data.customer) toLines.push("Customer:" + data.customer);
+    if (data.store && data.customer) toLines.push("Customer: " + data.customer);
     textLines(data.storeAddress).forEach(function (l) { toLines.push(l); });
     if (data.storePhone) toLines.push(data.storePhone);
     $("ivToAddr").innerHTML = toLines.map(function (l) { return "<div>" + l + "</div>"; }).join("");
@@ -2327,6 +2327,84 @@
   // order number, each additional ring gets its own block in another
   // quadrant — mirrored left/right and top/bottom off those same original
   // numbers — instead of a separate page per ring.
+  // jsPDF's bundled fonts (Helvetica) only understand WinAnsiEncoding —
+  // essentially Latin-1 plus a handful of typographic extras. A character
+  // outside that set (a macron like the "ō" in a name, Japanese text in an
+  // address or comment, …) doesn't get dropped or shown as a missing-glyph
+  // box — jsPDF silently maps the raw character code through the font's
+  // table and draws whatever glyph happens to land there, which comes out
+  // as garbled nonsense (a name turning into random letters, an address
+  // into a string of accented symbols). Real invoices have real customer
+  // names and addresses that aren't always plain ASCII, so rather than
+  // stripping or guessing, any string containing a character outside this
+  // set is instead drawn with the browser's own font rendering (which
+  // already knows every script installed on this computer) onto a canvas,
+  // and that bitmap is placed into the PDF exactly where the vector text
+  // would have gone. Plain WinAnsi-safe text — the overwhelming majority of
+  // the document — is untouched and stays crisp, selectable vector text.
+  var WINANSI_SAFE_RE = /^[\x20-\x7E\xA0-\xFF‘’“”–—…•]*$/;
+
+  function isPdfSafeText(s) {
+    return WINANSI_SAFE_RE.test(s);
+  }
+
+  // Renders `text` onto an offscreen canvas (supersampled for crisp print
+  // output) and drops it into the PDF as an image, sized and positioned so
+  // it lands exactly where doc.text(text, x, y, opts) would have for the
+  // font currently set on `doc`. Supports the same opts.align values
+  // ("left"/unset, "center", "right") as doc.text.
+  function drawUnicodeTextImage(doc, text, x, y, opts) {
+    var fontSize = doc.getFontSize();
+    var fontStyle = (doc.getFont() || {}).fontStyle || "normal";
+    var scale = 4; // supersample so the embedded bitmap prints crisply
+    var canvas = document.createElement("canvas");
+    var ctx = canvas.getContext("2d");
+    var cssFont = (fontStyle === "bold" ? "bold " : "") + (fontSize * scale) +
+      "px Helvetica, Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif";
+    ctx.font = cssFont;
+    var metrics = ctx.measureText(text);
+    var w = Math.max(1, Math.ceil(metrics.width));
+    var ascent = metrics.actualBoundingBoxAscent || fontSize * scale * 0.8;
+    var descent = metrics.actualBoundingBoxDescent || fontSize * scale * 0.25;
+    var h = Math.max(1, Math.ceil(ascent + descent) + 2);
+    canvas.width = w;
+    canvas.height = h;
+    ctx.font = cssFont; // resizing the canvas resets its context state
+    ctx.fillStyle = "#000000";
+    ctx.textBaseline = "alphabetic";
+    ctx.fillText(text, 0, ascent);
+
+    var ptW = w / scale;
+    var ptH = h / scale;
+    var drawX = x;
+    if (opts && opts.align === "right") drawX = x - ptW;
+    else if (opts && opts.align === "center") drawX = x - ptW / 2;
+    var drawY = y - ascent / scale; // doc.text's y is the text baseline
+
+    doc.addImage(canvas.toDataURL("image/png"), "PNG", drawX, drawY, ptW, ptH);
+  }
+
+  // Drop-in for doc.text(text, x, y, opts) that stays on jsPDF's normal
+  // vector-text path for ordinary text, and only falls back to the image
+  // path above for the rare line that actually needs it.
+  function pdfText(doc, text, x, y, opts) {
+    text = text === undefined || text === null ? "" : String(text);
+    if (!text || isPdfSafeText(text)) {
+      doc.text(text, x, y, opts);
+      return;
+    }
+    drawUnicodeTextImage(doc, text, x, y, opts);
+  }
+
+  // Drop-in for doc.text(linesArray, x, y, opts) — mirrors jsPDF's own
+  // per-line spacing (doc.getLineHeight()) so switching a wrapped note or
+  // comment between vector text and the image fallback never shifts its
+  // line spacing relative to the surrounding layout.
+  function pdfTextBlock(doc, lines, x, y, opts) {
+    var lh = doc.getLineHeight();
+    lines.forEach(function (ln, i) { pdfText(doc, ln, x, y + i * lh, opts); });
+  }
+
   var DOCKET_FIELD_X = 344.7, DOCKET_CONTENT_RIGHT = 583.5, DOCKET_TOP_Y = 59;
   var DOCKET_LOGO_X = 390.8, DOCKET_LOGO_Y = 6;
   var DOCKET_PAGE_W = 612, DOCKET_PAGE_H = 792;
@@ -2365,14 +2443,14 @@
 
     function printLine(label, value, bold) {
       doc.setFont("helvetica", bold ? "bold" : "normal");
-      doc.text(label + ": " + (value || ""), fieldX, y);
+      pdfText(doc, label + ": " + (value || ""), fieldX, y);
       y += lh;
     }
 
     function printSplit(a, b) {
       doc.setFont("helvetica", "normal");
-      doc.text(a.label + ": " + (a.value || ""), fieldX, y);
-      doc.text(b.label + ": " + (b.value || ""), secondColX, y);
+      pdfText(doc, a.label + ": " + (a.value || ""), fieldX, y);
+      pdfText(doc, b.label + ": " + (b.value || ""), secondColX, y);
       y += lh;
     }
 
@@ -2384,8 +2462,8 @@
     function printSplitAuto(a, b, gap) {
       doc.setFont("helvetica", "normal");
       var aText = a.label + ": " + (a.value || "");
-      doc.text(aText, fieldX, y);
-      doc.text(b.label + ": " + (b.value || ""), fieldX + doc.getTextWidth(aText) + (gap || 24), y);
+      pdfText(doc, aText, fieldX, y);
+      pdfText(doc, b.label + ": " + (b.value || ""), fieldX + doc.getTextWidth(aText) + (gap || 24), y);
       y += lh;
     }
 
@@ -2397,7 +2475,7 @@
     function printNote(value) {
       doc.setFont("helvetica", "normal");
       var wrapped = doc.splitTextToSize("Note: " + (value || ""), contentRight - fieldX);
-      doc.text(wrapped, fieldX, y);
+      pdfTextBlock(doc, wrapped, fieldX, y);
       y += lh * wrapped.length;
     }
 
@@ -2618,12 +2696,12 @@
     var toLh = 15.4;
     doc.setFontSize(12);
     doc.setFont("helvetica", "bold");
-    doc.text("To: " + (data.store || data.customer || ""), 40, toY);
+    pdfText(doc, "To: " + (data.store || data.customer || ""), 40, toY);
     doc.setFont("helvetica", "normal");
     toY += toLh;
-    if (data.store && data.customer) { doc.text("Customer:" + data.customer, 57.1, toY); toY += toLh; }
-    textLines(data.storeAddress).forEach(function (l) { doc.text(l, 57.1, toY); toY += toLh; });
-    if (data.storePhone) { doc.text(data.storePhone, 57.1, toY); toY += toLh; }
+    if (data.store && data.customer) { pdfText(doc, "Customer: " + data.customer, 57.1, toY); toY += toLh; }
+    textLines(data.storeAddress).forEach(function (l) { pdfText(doc, l, 57.1, toY); toY += toLh; });
+    if (data.storePhone) { pdfText(doc, data.storePhone, 57.1, toY); toY += toLh; }
 
     // Ship to — defaults to "SAME" when left blank
     var shipY = 208.3;
@@ -2634,7 +2712,7 @@
     shipY += toLh;
     var shipLines = textLines(data.shipTo);
     if (!shipLines.length) shipLines = ["SAME"];
-    shipLines.forEach(function (l) { doc.text(l, 310, shipY); shipY += toLh; });
+    shipLines.forEach(function (l) { pdfText(doc, l, 310, shipY); shipY += toLh; });
 
     // Item table — one row per order normally, plus one more row for each
     // additional ring added below (same client, more than one ring, one
@@ -2689,15 +2767,15 @@
       var lines = itemLines[idx];
 
       doc.setFont("helvetica", "normal");
-      doc.text(item.style || "", colCenter[0], rowMidY, { align: "center" });
-      doc.text(item.size || "", colCenter[1], rowMidY, { align: "center" });
-      doc.text(item.metal || "", colCenter[2], rowMidY, { align: "center" });
+      pdfText(doc, item.style || "", colCenter[0], rowMidY, { align: "center" });
+      pdfText(doc, item.size || "", colCenter[1], rowMidY, { align: "center" });
+      pdfText(doc, item.metal || "", colCenter[2], rowMidY, { align: "center" });
 
       var stoneY = rowMidY - ((lines.stoneLines.length - 1) / 2) * stoneLh;
-      lines.stoneLines.forEach(function (l) { doc.text(l, colX[3] + 4.2, stoneY); stoneY += stoneLh; });
+      lines.stoneLines.forEach(function (l) { pdfText(doc, l, colX[3] + 4.2, stoneY); stoneY += stoneLh; });
 
       var noteY = rowMidY - ((lines.noteLines.length - 1) / 2) * stoneLh;
-      lines.noteLines.forEach(function (l) { doc.text(l, colX[4] + 4.2, noteY); noteY += stoneLh; });
+      lines.noteLines.forEach(function (l) { pdfText(doc, l, colX[4] + 4.2, noteY); noteY += stoneLh; });
 
       doc.setFont("helvetica", "bold");
       doc.text(formatPrice(item.price, yen), pageRight - 6, rowMidY, { align: "right" });
@@ -2780,7 +2858,7 @@
     var cy = rowY + 39.5;
     comments.forEach(function (c, i) {
       var wrapped = doc.splitTextToSize((i + 1) + ". " + c, pageRight - 40);
-      doc.text(wrapped, 40, cy);
+      pdfTextBlock(doc, wrapped, 40, cy);
       cy += 13.2 * wrapped.length;
     });
 
