@@ -726,6 +726,11 @@
           </div>
         </div>
         <div>
+          <label for="deposit">Deposit received <span style="text-transform:none;font-weight:400;">(optional)</span></label>
+          <input id="deposit" data-mono type="text" inputmode="numeric" placeholder="500">
+          <div class="field-note">Already collected from the client — leave blank to skip the line entirely. Deducted from the subtotal before shipping is added.</div>
+        </div>
+        <div>
           <label for="salesTaxRate">Sales tax rate % <span style="text-transform:none;font-weight:400;">(optional)</span></label>
           <input id="salesTaxRate" data-mono type="text" inputmode="decimal" placeholder="e.g. 8.625">
           <div class="field-note">For direct (retail) orders that owe sales tax — store/wholesale orders usually leave this blank. Calculated off the price; leave blank for no tax line on the invoice.</div>
@@ -827,6 +832,7 @@
           <div class="inv-totals">
             <div><span>SUBTOTAL</span><span id="ivSubtotal">$0</span></div>
             <div id="ivTaxRow" hidden><span id="ivTaxLabel">SALES TAX</span><span id="ivTaxAmt">$0</span></div>
+            <div id="ivDepositRow" hidden><span>DEPOSIT</span><span id="ivDepositAmt">$0</span></div>
             <div><span>SHIPPING &amp; HANDLING</span><span id="ivShipCost">$0</span></div>
             <div class="inv-total-due"><span>TOTAL DUE</span><span id="ivTotalDue">$0</span></div>
           </div>
@@ -860,7 +866,7 @@
 
   var FIELD_IDS = ["orderNo","store","customer","orderDate","dueDate","style","metal",
     "widthMm","heightMm","center","sign","size","iid","iod","oid","ood","price","notes",
-    "stoneDetail","storeAddress","storePhone","shipTo","invoiceDate","shipping","salesTaxRate","invoiceComments","extraItemsJson"];
+    "stoneDetail","storeAddress","storePhone","shipTo","invoiceDate","shipping","deposit","salesTaxRate","invoiceComments","extraItemsJson"];
 
   // The fields that are genuinely per-ring — everything else in FIELD_IDS
   // (Order No, Store, Customer, Dates, the whole Invoice fieldset) is
@@ -2140,12 +2146,21 @@
     var shippingNum = parseMoney(data.shipping);
     if (isNaN(shippingNum)) shippingNum = 0;
     var tax = computeTax(data, subtotal);
-    var totalDue = subtotal + shippingNum + tax.amount;
+    // A deposit already collected from the client — blank leaves the line
+    // off the invoice entirely; anything typed is deducted from the
+    // subtotal before shipping gets added back on.
+    var depositNum = parseMoney(data.deposit);
+    if (isNaN(depositNum)) depositNum = 0;
+    var totalDue = subtotal + tax.amount - depositNum + shippingNum;
     $("ivSubtotal").textContent = formatPrice(String(subtotal), yen);
     $("ivTaxRow").hidden = tax.amount <= 0;
     if (tax.amount > 0) {
       $("ivTaxLabel").textContent = "SALES TAX (" + formatTaxRate(tax.rate) + "%)";
       $("ivTaxAmt").textContent = formatPrice(String(tax.amount), yen);
+    }
+    $("ivDepositRow").hidden = depositNum <= 0;
+    if (depositNum > 0) {
+      $("ivDepositAmt").textContent = "-" + formatPrice(String(depositNum), yen);
     }
     $("ivShipCost").textContent = formatPrice(data.shipping || "0", yen);
     $("ivTotalDue").textContent = formatPrice(String(totalDue), yen);
@@ -2708,7 +2723,12 @@
     var shippingNum = parseMoney(data.shipping);
     if (isNaN(shippingNum)) shippingNum = 0;
     var tax = computeTax(data, subtotal);
-    var totalDue = subtotal + shippingNum + tax.amount;
+    // A deposit already collected from the client — blank leaves the line
+    // off the invoice entirely; anything typed is deducted from the
+    // subtotal before shipping gets added back on.
+    var depositNum = parseMoney(data.deposit);
+    if (isNaN(depositNum)) depositNum = 0;
+    var totalDue = subtotal + tax.amount - depositNum + shippingNum;
 
     doc.setFontSize(10);
     doc.setFont("helvetica", "normal");
@@ -2722,6 +2742,14 @@
       doc.text("SALES TAX (" + formatTaxRate(tax.rate) + "%)", totalsLeft, rowY);
       doc.setFont("helvetica", "bold");
       doc.text(formatPrice(String(tax.amount), yen), pageRight - 6, rowY, { align: "right" });
+      rowY += totalsLh;
+    }
+
+    if (depositNum > 0) {
+      doc.setFont("helvetica", "normal");
+      doc.text("DEPOSIT", totalsLeft, rowY);
+      doc.setFont("helvetica", "bold");
+      doc.text("-" + formatPrice(String(depositNum), yen), pageRight - 6, rowY, { align: "right" });
       rowY += totalsLh;
     }
 
