@@ -467,8 +467,10 @@
   .extra-item-card {
     display: flex; align-items: center; justify-content: space-between; gap: 10px;
     background: var(--sunken); border: 1px solid var(--line); border-radius: 4px;
-    padding: 8px 10px; margin-bottom: 8px;
+    padding: 8px 10px; margin-bottom: 8px; cursor: pointer;
   }
+  .extra-item-card:hover { border-color: var(--accent); }
+  .extra-item-card.is-editing { border-color: var(--accent-strong); background: var(--highlight, #fff6e6); }
   .extra-item-card .ei-main { font-size: 12.5px; font-weight: 600; font-family: 'IBM Plex Mono', monospace; color: var(--accent-strong); }
   .extra-item-card .ei-sub { font-size: 11px; color: var(--ink-faint); margin-top: 2px; }
   .extra-item-card .ei-del { background: none; border: none; color: var(--ink-faint); font-size: 15px; padding: 2px 6px; line-height: 1; cursor: pointer; }
@@ -746,12 +748,13 @@
           <label>Additional rings on this invoice <span style="text-transform:none;font-weight:400;">(optional)</span></label>
           <div class="field-note">Same client, more than one ring — e.g. O#2603306-1 and O#2603306-2 — add the other order(s) here so they show as extra rows on this one invoice instead of a separate one.</div>
           <div id="extraItemsList"></div>
+          <div class="field-note">Click an added item below to edit it.</div>
           <div class="add-new-row">
             <select id="extraItemPicker"></select>
             <button type="button" class="btn-ghost" id="extraItemAddBtn">Add from Recent orders</button>
           </div>
           <details id="extraItemManual">
-            <summary>Or add one manually</summary>
+            <summary id="extraItemManualSummary">Or add one manually</summary>
             <div class="row">
               <div><label for="exStyle">Style</label><input id="exStyle"></div>
               <div><label for="exMetal">Metal</label><input id="exMetal"></div>
@@ -768,7 +771,10 @@
               <div><label for="exWidthMm">Width (mm)</label><input id="exWidthMm" data-mono type="number" step="0.1" min="0"></div>
               <div><label for="exHeightMm">Height (mm)</label><input id="exHeightMm" data-mono type="number" step="0.1" min="0"></div>
             </div>
-            <button type="button" class="btn-ghost" id="exAddManualBtn">Add item</button>
+            <div class="add-new-row">
+              <button type="button" class="btn-ghost" id="exAddManualBtn">Add item</button>
+              <button type="button" class="btn-ghost" id="exCancelEditBtn" hidden>Cancel edit</button>
+            </div>
           </details>
         </div>
       </fieldset>
@@ -1078,6 +1084,14 @@
   var ringCount = 1;
   var activeRingIndex = 0;
   var ringsState = [blankRingData()];
+
+  // Which "Additional items" entry (if any) the manual-entry fields below
+  // Additional rings currently represent — -1 means those fields are for a
+  // brand new item, a real index means clicking an existing card (or
+  // picking one from Recent Orders) loaded it in for editing, and
+  // "Add item" becomes "Save changes" and updates that entry in place
+  // instead of appending a new one.
+  var editingExtraItemIndex = -1;
 
   function captureActiveRing() {
     var obj = {};
@@ -2243,6 +2257,9 @@
           activeRingIndex = 0;
           ringsState = [blankRingData()];
           renderRingTabs();
+          editingExtraItemIndex = -1;
+          clearExtraItemFields();
+          setExtraItemEditUI(false);
           setFormData(list[idx]);
           refreshFromForm();
           $("statusNote").textContent = "Loaded order " + (list[idx].orderNo || "");
@@ -2287,9 +2304,57 @@
     }).join("");
   }
 
+  // Fills the manual-entry fields (under "Additional rings on this
+  // invoice") from an item object — used both when editing an
+  // already-added item and when a recent order is picked from the
+  // dropdown, so either way you land on the same editable fields instead
+  // of an opaque, locked summary.
+  function populateExtraItemFields(item) {
+    $("exStyle").value = item.style || "";
+    $("exMetal").value = item.metal || "";
+    $("exSize").value = item.size || "";
+    $("exPrice").value = item.price || "";
+    $("exStoneDetail").value = item.stoneDetail || "";
+    $("exWidthMm").value = item.widthMm || "";
+    $("exHeightMm").value = item.heightMm || "";
+  }
+
+  function clearExtraItemFields() {
+    ["exStyle", "exMetal", "exSize", "exPrice", "exStoneDetail", "exWidthMm", "exHeightMm"].forEach(function (id) {
+      $(id).value = "";
+    });
+  }
+
+  // Swaps the manual-entry section between "adding a new item" and
+  // "editing an existing one" — same fields either way, just a different
+  // button label and an extra way out.
+  function setExtraItemEditUI(editing) {
+    $("exAddManualBtn").textContent = editing ? "Save changes" : "Add item";
+    $("exCancelEditBtn").hidden = !editing;
+    $("extraItemManualSummary").textContent = editing ? "Editing item below" : "Or add one manually";
+  }
+
+  function startEditingExtraItem(idx, item) {
+    editingExtraItemIndex = idx;
+    populateExtraItemFields(item);
+    $("extraItemManual").open = true;
+    setExtraItemEditUI(true);
+    renderExtraItemsList(getFormData());
+    $("exStyle").focus();
+  }
+
+  function cancelExtraItemEdit() {
+    editingExtraItemIndex = -1;
+    clearExtraItemFields();
+    setExtraItemEditUI(false);
+    renderExtraItemsList(getFormData());
+  }
+
   // The "Additional items" list under Invoice — one card per extra ring
   // added to this invoice (picked from Recent Orders or typed in by hand),
-  // each removable on its own, separate from the main order above it.
+  // each removable on its own, and clickable to load it back into the
+  // manual-entry fields above for editing — separate from the main order
+  // above it.
   function renderExtraItemsList(data) {
     var el = $("extraItemsList");
     if (!el) return;
@@ -2301,7 +2366,7 @@
     var yen = isYenStore(data.store);
     el.innerHTML = items.map(function (item, i) {
       var sub = [item.style, item.metal, item.size].filter(Boolean).join(" · ");
-      return '<div class="extra-item-card">' +
+      return '<div class="extra-item-card' + (i === editingExtraItemIndex ? " is-editing" : "") + '" data-idx="' + i + '" title="Click to edit">' +
         "<div>" +
         '<div class="ei-main">' + escapeHtml(item.orderNo ? "O#" + item.orderNo : (item.style || "Item")) + "</div>" +
         '<div class="ei-sub">' + escapeHtml(sub) + (sub ? " — " : "") + escapeHtml(formatPrice(item.price, yen) || "") + "</div>" +
@@ -2309,13 +2374,30 @@
         '<button type="button" class="ei-del" data-idx="' + i + '" title="Remove">×</button>' +
         "</div>";
     }).join("");
+    Array.prototype.forEach.call(el.querySelectorAll(".extra-item-card"), function (card) {
+      card.addEventListener("click", function (ev) {
+        if (ev.target.classList.contains("ei-del")) return;
+        var idx = parseInt(card.getAttribute("data-idx"), 10);
+        var current = getExtraItems(getFormData());
+        if (current[idx]) startEditingExtraItem(idx, current[idx]);
+      });
+    });
     Array.prototype.forEach.call(el.querySelectorAll(".ei-del"), function (btn) {
-      btn.addEventListener("click", function () {
+      btn.addEventListener("click", function (ev) {
+        ev.stopPropagation();
         var idx = parseInt(btn.getAttribute("data-idx"), 10);
         var current = getExtraItems(getFormData());
         current.splice(idx, 1);
         setExtraItems(current);
-        refreshFromForm();
+        // Deleting the item currently being edited (or one before it in
+        // the list) clears/reindexes the edit state so Save changes can't
+        // land on the wrong row.
+        if (idx === editingExtraItemIndex) {
+          cancelExtraItemEdit();
+        } else {
+          if (idx < editingExtraItemIndex) editingExtraItemIndex -= 1;
+          refreshFromForm();
+        }
       });
     });
   }
@@ -3182,16 +3264,22 @@
         loadRing(0);
         setExtraItems(rings.slice(1));
         renderRingTabs();
+        editingExtraItemIndex = -1;
+        clearExtraItemFields();
+        setExtraItemEditUI(false);
       }
       enterMode("invoice");
     });
 
-    // Additional items — "Add from Recent orders" pulls in a whole saved
-    // order (style/metal/size/stones/price and all) as one more invoice
-    // row with no retyping; the manual form below it covers a ring that
-    // was never saved as its own order. Either way the result lands in the
-    // extraItemsJson hidden field, so it rides along through Recent Orders
-    // like every other field (see getExtraItems/setExtraItems above).
+    // Additional items — "Add from Recent orders" loads a whole saved
+    // order's fields into the manual-entry section below (instead of
+    // dropping it straight into the list as a locked summary), so you can
+    // fine-tune anything — a different price, a corrected size — before it
+    // becomes a line on this invoice; the same fields cover typing one in
+    // by hand for a ring that was never saved as its own order. Either way
+    // the result lands in the extraItemsJson hidden field, so it rides
+    // along through Recent Orders like every other field (see
+    // getExtraItems/setExtraItems above).
     $("extraItemAddBtn").addEventListener("click", function () {
       var sel = $("extraItemPicker");
       var idx = parseInt(sel.value, 10);
@@ -3200,11 +3288,12 @@
         $("statusNote").textContent = "Pick a saved order to add first.";
         return;
       }
-      var current = getExtraItems(getFormData());
-      current.push(list[idx]);
-      setExtraItems(current);
-      refreshFromForm();
-      $("statusNote").textContent = "Added O#" + (list[idx].orderNo || "") + " to this invoice.";
+      editingExtraItemIndex = -1;
+      populateExtraItemFields(list[idx]);
+      $("extraItemManual").open = true;
+      setExtraItemEditUI(false);
+      $("exStyle").focus();
+      $("statusNote").textContent = "Loaded O#" + (list[idx].orderNo || "") + " below — edit if needed, then click Add item.";
     });
 
     $("exAddManualBtn").addEventListener("click", function () {
@@ -3224,13 +3313,23 @@
         return;
       }
       var current = getExtraItems(getFormData());
-      current.push(item);
+      var editing = editingExtraItemIndex >= 0 && editingExtraItemIndex < current.length;
+      if (editing) {
+        current[editingExtraItemIndex] = item;
+      } else {
+        current.push(item);
+      }
       setExtraItems(current);
-      ["exStyle", "exMetal", "exSize", "exPrice", "exStoneDetail", "exWidthMm", "exHeightMm"].forEach(function (id) {
-        $(id).value = "";
-      });
+      editingExtraItemIndex = -1;
+      clearExtraItemFields();
+      setExtraItemEditUI(false);
       refreshFromForm();
-      $("statusNote").textContent = "Added item to this invoice.";
+      $("statusNote").textContent = editing ? "Updated item on this invoice." : "Added item to this invoice.";
+    });
+
+    $("exCancelEditBtn").addEventListener("click", function () {
+      cancelExtraItemEdit();
+      $("statusNote").textContent = "Edit cancelled.";
     });
 
     // Shared by Save PDF and Print — the checks and the "remember this
@@ -3282,6 +3381,9 @@
       activeRingIndex = 0;
       ringsState = [blankRingData()];
       renderRingTabs();
+      editingExtraItemIndex = -1;
+      clearExtraItemFields();
+      setExtraItemEditUI(false);
       setFormData(blankOrderData());
       refreshFromForm();
       $("statusNote").textContent = "Blank order ready.";
